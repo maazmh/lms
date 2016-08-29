@@ -41,4 +41,30 @@ public class LeavesController {
 		
 		return model;
 	}
+	
+	@RequestMapping(value = "/saveLeave", method = RequestMethod.POST)
+	public ModelAndView saveLeave(HttpSession session, @ModelAttribute("leavesForm") LeavesForm leavesForm) {
+		ModelAndView model = new ModelAndView("calendar");
+		
+		Integer empId = (Integer) session.getAttribute("employeeId");
+		logger.info("Employee Id: {}", empId);
+		
+		//@ TODO: Remove these hardcoding below
+		leavesForm.setEmployeeId(1);
+		empId = 1;
+		
+		lService.saveLeave(leavesForm);
+		
+		Map<Integer, String> mapLeaveTypes = lService.getAllLeaveTypes();
+		model.addObject("leaveTypes", mapLeaveTypes);
+		
+		leavesForm = lService.getLeavesForForm(leavesForm, empId);
+		
+		leavesForm.setDtFrom(null);
+		leavesForm.setDtTo(null);
+		leavesForm.setLeaveReason(null);
+		
+		return model;
+	}
+	
 }

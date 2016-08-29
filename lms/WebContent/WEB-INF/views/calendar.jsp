@@ -18,14 +18,10 @@
 <script	src="http://www.bootstrap-year-calendar.com/js/bootstrap-popover.js"></script>
 <script	src="http://www.bootstrap-year-calendar.com/js/respond.min.js"></script>
 <script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+<script	src="/lms/resources/js/date-util.js"></script>
 
 <script type="text/javascript">
 function getData() {
-	//console.log('sada');
-	//console.log(document.getElementById("employeeId").value);
-	//alert(new Date(2016, 4, 28));
-	//alert('fds');
-	//alert($("#employeeId"));
 	$.ajax({
 		type : "GET",
 		contentType : "application/json",
@@ -69,23 +65,18 @@ function getData() {
 //	    	alert(JSON.stringify(obj));
 //	    	alert('dataSource['+i+']: '+dataSource[i])
 	    	for(var j in obj) {
-	    		//alert('obj['+j+']: '+obj[j]);
 	    		if(j=='name') {
 	    			dataSource[x].name = obj[j];
-	    			//alert('obj['+j+']: '+obj[j]);
 	    		} else if(j=='location') {
 	    			dataSource[x].location = obj[j];
-	    			//alert('obj['+j+']: '+obj[j]);
 	    		} else if(j=='startDate') {
 	    			var startDate = obj[j];
 	    			var arrStartDate = startDate.split('-');
 					dataSource[x].startDate = new Date(arrStartDate[0], arrStartDate[1]-1, arrStartDate[2]);
-	    			//alert('obj['+j+']: '+obj[j]);
 	    		} else if(j=='endDate') {
 	    			var endDate = obj[j];
 	    			var arrEndDate = endDate.split('-');
 	    			dataSource[x].endDate = new Date(arrEndDate[0], arrEndDate[1]-1, arrEndDate[2]);
-	    			//alert('obj['+j+']: '+obj[j]);
 	    		}
 	    	}
 	    }
@@ -94,13 +85,40 @@ function getData() {
 }
 
 function validate() {
-	document.getElementById("spanDtFrom").innerHTML = document.getElementById('dtFrom').value;
-	document.getElementById("spanDtTo").innerHTML = document.getElementById('dtTo').value;
-	return true;
+	if(document.getElementById('dtFrom').value=='' || document.getElementById('dtTo').value=='') {
+		document.getElementById("btnSaveChanges").style.display="none";
+		document.getElementById("divErrorMessage").style.display="block";
+		document.getElementById("divConfirmationMessage").style.display="none";
+		document.getElementById("myModalLabel").innerHTML = "Error";
+		return false;
+	} else {
+		var strFrom = document.getElementById('dtFrom').value;
+		var strTo = document.getElementById('dtTo').value;
+		
+		document.getElementById("btnSaveChanges").style.display="block";
+		document.getElementById("divErrorMessage").style.display="none";
+		document.getElementById("divConfirmationMessage").style.display="block";
+		
+		document.getElementById("myModalLabel").innerHTML = "Confirmation";
+		
+		document.getElementById("spanDtFrom").innerHTML = document.getElementById('dtFrom').value;
+		document.getElementById("spanDtTo").innerHTML = document.getElementById('dtTo').value;
+		document.getElementById("spanLeaveType").innerHTML = document.getElementById('leaveType').value;
+		document.getElementById("spanAppliedDays").innerHTML = document.getElementById('dtTo').value;
+		document.getElementById("spanRemainingLeaves").innerHTML = document.getElementById('leaveType').value;
+		
+		return true;
+	}
 }
 
 function saveLeaves() {
-	
+	document.getElementById('leavesForm').submit();
+}
+
+function cancelModal() {
+	document.getElementById("divErrorMessage").style.display="none";
+	document.getElementById("divConfirmationMessage").style.display="none";
+	document.getElementById("myModalLabel").innerHTML = "Confirmation";
 }
 </script>
 	
@@ -108,7 +126,7 @@ function saveLeaves() {
 </head>
 <body onload="getData();">
 	<div class="container" style="padding-top: 25px;">
-		<form:form method="post" action="applyLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
+		<form:form method="post" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
 			<form:hidden path="employeeId"/>
 			<form:hidden path="leavesAllocated"/>
 			<form:hidden path="leavesUsed"/>
@@ -163,6 +181,8 @@ function saveLeaves() {
 							<form:select path="leaveType" cssClass="form-control">
 								<form:options items="${leaveTypes}" />
 							</form:select>
+							​​<label for="leaveReason">Leaves Reason</label>
+							<form:input path="leaveReason" cssClass="form-control" />
 						</div>
 					</td>
 				</tr>
@@ -185,16 +205,21 @@ function saveLeaves() {
 	        <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
 	      </div>
 	      <div class="modal-body">
-	        Click OK to confirm leaves. <br>
-	        Date From: <span id="spanDtFrom"></span><br>
-	        Date To: <span id="spanDtTo"></span><br>
-	        Leave Type: <span id="spanLeaveType"></span><br>
-	        Applied Days: <span id="spanAppliedDays"></span><br>
-	        Remaining Leaves after Approval: <span id="spanRemainingLeaves"></span>
+	      	<div id="divErrorMessage" style="display: none;">
+	      		Please Enter Both Dates.
+	      	</div>
+	      	<div id="divConfirmationMessage" style="display: none;">
+		        Click OK to confirm leaves. <br>
+		        Date From: <span id="spanDtFrom"></span><br>
+		        Date To: <span id="spanDtTo"></span><br>
+		        Leave Type: <span id="spanLeaveType"></span><br>
+		        Applied Days: <span id="spanAppliedDays"></span><br>
+		        Remaining Leaves after Approval: <span id="spanRemainingLeaves"></span>
+	        </div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary" onclick="saveLeaves();">Save changes</button>
+	        <button id="btnSaveChanges" type="button" class="btn btn-primary" onclick="saveLeaves();">Save changes</button>
 	      </div>
 	    </div>
 	  </div>

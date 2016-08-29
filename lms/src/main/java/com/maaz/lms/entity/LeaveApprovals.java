@@ -30,7 +30,7 @@ public class LeaveApprovals implements Serializable{
 	private Date dtUpdated;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "idLeaveApprovals")
 	public Integer getIdLeaveApprovals() {
 		return idLeaveApprovals;

@@ -37,4 +37,16 @@ public class LoginDaoImpl implements LoginDao {
 		}
 	}
 
+
+	@Override
+	public Employee getEmployee(Integer employeeId) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			return (Employee) session.get(Employee.class, employeeId);
+		} catch(Exception e) {
+			logger.error("DAO Exception getLeaveType",e);
+		}
+		return null;
+	}
+
 }

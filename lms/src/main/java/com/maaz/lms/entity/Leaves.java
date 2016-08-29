@@ -39,7 +39,7 @@ public class Leaves implements Serializable {
 	private Set<LeaveApprovals> leaveApprovals = new HashSet<LeaveApprovals>();
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "idLeaves")
 	public Integer getIdLeaves() {
 		return idLeaves;

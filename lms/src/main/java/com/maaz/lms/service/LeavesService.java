@@ -12,4 +12,6 @@ public interface LeavesService {
 	public Map<Integer, String> getAllLeaveTypes();
 	
 	public LeavesForm getLeavesForForm(LeavesForm form, Integer employeeId);
+
+	public void saveLeave(LeavesForm leavesForm);
 }

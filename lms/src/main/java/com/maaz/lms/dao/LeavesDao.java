@@ -9,4 +9,8 @@ public interface LeavesDao {
 	public List<Leaves> getLeaves(Integer employeeId);
 
 	public List<LeaveType> getAllLeaveTypes();
+
+	public LeaveType getLeaveType(Integer idLeaveType);
+
+	public Integer saveLeave(Leaves leave);
 }

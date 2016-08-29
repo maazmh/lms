@@ -32,7 +32,7 @@ public class Employee implements Serializable {
 	private Set<Approvers> approvers = new HashSet<Approvers>();
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "idEmployee")
 	public Integer getIdEmployee() {
 		return idEmployee;

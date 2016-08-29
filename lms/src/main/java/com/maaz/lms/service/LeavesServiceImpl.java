@@ -3,6 +3,7 @@ package com.maaz.lms.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.maaz.lms.controller.AjaxRestController;
 import com.maaz.lms.dao.LeavesDao;
+import com.maaz.lms.dao.LoginDao;
 import com.maaz.lms.entity.Employee;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
@@ -33,7 +34,11 @@ public class LeavesServiceImpl implements LeavesService {
 	@Autowired
 	LeavesDao leavesDao;
 	
-	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	@Autowired
+	LoginDao loginDao;
+	
+	DateFormat dfDbToStr = new SimpleDateFormat("yyyy-MM-dd"); 
+	DateFormat dfStrToDb = new SimpleDateFormat("dd-MM-yyyy"); 
 	
 	@Override
 	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer employeeId) {
@@ -46,8 +51,8 @@ public class LeavesServiceImpl implements LeavesService {
 				resp.setId(leaves.getIdLeaves());
 				resp.setName(leaves.getEmployee().getFirstName() + " " + leaves.getEmployee().getLastName());
 				resp.setLocation(leaves.getLeaveType().getLeaveType());
-				resp.setStartDate(df.format(leaves.getDtFrom()));
-				resp.setEndDate(df.format(leaves.getDtTo()));
+				resp.setStartDate(dfDbToStr.format(leaves.getDtFrom()));
+				resp.setEndDate(dfDbToStr.format(leaves.getDtTo()));
 				lstLeavesResponse.add(resp);
 			}
 		}
@@ -165,6 +170,26 @@ public class LeavesServiceImpl implements LeavesService {
 		}
 		
 		return leaveApproved;
+	}
+
+	@Override
+	public void saveLeave(LeavesForm leavesForm) {
+		try {
+			Leaves leave = new Leaves();
+			Employee emp = loginDao.getEmployee(leavesForm.getEmployeeId());
+			leave.setEmployee(emp);
+			leave.setDtFrom(dfStrToDb.parse(leavesForm.getDtFrom()));
+			leave.setDtTo(dfStrToDb.parse(leavesForm.getDtTo()));
+			leave.setDtAppliedOn(new Date());
+			LeaveType leaveType = leavesDao.getLeaveType(leavesForm.getLeaveType());
+			leave.setLeaveType(leaveType);
+			leave.setLeaveDescription(leavesForm.getLeaveReason());
+			
+			Integer idLeave = leavesDao.saveLeave(leave);
+			logger.info("Leave Saved - id: {}", idLeave);
+		} catch(Exception e) {
+			logger.error("Exception in saveLeave Service",e);
+		}
 	}
 
 }

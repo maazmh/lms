@@ -1,6 +1,7 @@
 package com.maaz.lms.service;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,10 +14,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.maaz.lms.dao.LeavesDao;
 import com.maaz.lms.dao.LoginDao;
+import com.maaz.lms.entity.Approvers;
 import com.maaz.lms.entity.Employee;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
@@ -36,6 +39,16 @@ public class LeavesServiceImpl implements LeavesService {
 	
 	@Autowired
 	LoginDao loginDao;
+	
+	@Autowired
+	EmailService emailService;
+	
+	@Value("${mail.first.approval.subject}")
+	String emailSubject;
+	
+	@Value("${mail.first.approval.body}")
+	String emailBody;
+	
 	
 	DateFormat dfDbToStr = new SimpleDateFormat("yyyy-MM-dd"); 
 	DateFormat dfStrToDb = new SimpleDateFormat("dd-MM-yyyy"); 
@@ -187,6 +200,26 @@ public class LeavesServiceImpl implements LeavesService {
 			
 			Integer idLeave = leavesDao.saveLeave(leave);
 			logger.info("Leave Saved - id: {}", idLeave);
+			
+			if(idLeave!=null) {
+				//Send Email to the first Approver.
+				Set<Approvers> approvers = emp.getApprovers();
+				Iterator<Approvers> itr = approvers.iterator();
+				Approvers firstApprover = itr.next();
+				
+				logger.info("First Approver for empId: {}, empName: {} is approverEmpId: {}, approverEmpName: {}", 
+						new Object[] {emp.getIdEmployee(), emp.getFirstName(), 
+								firstApprover.getApprover().getIdEmployee(), firstApprover.getApprover().getFirstName()});
+				
+				String emailTo = firstApprover.getApprover().getEmailId();
+				String[] emailCc = {emp.getEmailId()};
+				
+				String subject = MessageFormat.format(emailSubject, emp.getFirstName());
+				String body = MessageFormat.format(emailBody, firstApprover.getApprover().getFirstName(), 
+						leave.getLeaveType().getLeaveType(), emp.getFirstName(), 
+						leavesForm.getDtFrom(), leavesForm.getDtTo());
+				emailService.sendEmail(emailTo, emailCc, body, subject);
+			}
 		} catch(Exception e) {
 			logger.error("Exception in saveLeave Service",e);
 		}

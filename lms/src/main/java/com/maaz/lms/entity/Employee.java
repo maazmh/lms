@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 @Entity
@@ -90,6 +91,7 @@ public class Employee implements Serializable {
 	}
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
+	@OrderBy
 	public Set<Approvers> getApprovers() {
 		return approvers;
 	}

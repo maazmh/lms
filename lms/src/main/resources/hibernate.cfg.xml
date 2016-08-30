@@ -37,6 +37,7 @@
  		<mapping class="com.maaz.lms.entity.LeaveType"/>
  		<mapping class="com.maaz.lms.entity.Approvers"/>
  		<mapping class="com.maaz.lms.entity.LeaveApprovals"/>
+ 		<mapping class="com.maaz.lms.entity.Department"/>
  		
  		 
     </session-factory>

@@ -56,18 +56,22 @@ public class LeavesServiceImpl implements LeavesService {
 	@Override
 	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer employeeId) {
 		List<LeavesCalendarResponse> lstLeavesResponse = null;
-		List<Leaves> lstLeaves = leavesDao.getLeaves(employeeId);
-		if(lstLeaves!=null) {
-			lstLeavesResponse = new ArrayList<LeavesCalendarResponse>();
-			for(Leaves leaves : lstLeaves) {
-				LeavesCalendarResponse resp = new LeavesCalendarResponse();
-				resp.setId(leaves.getIdLeaves());
-				resp.setName(leaves.getEmployee().getFirstName() + " " + leaves.getEmployee().getLastName());
-				resp.setLocation(leaves.getLeaveType().getLeaveType());
-				resp.setStartDate(dfDbToStr.format(leaves.getDtFrom()));
-				resp.setEndDate(dfDbToStr.format(leaves.getDtTo()));
-				lstLeavesResponse.add(resp);
+		try {
+			List<Leaves> lstLeaves = leavesDao.getLeaves(employeeId);
+			if(lstLeaves!=null) {
+				lstLeavesResponse = new ArrayList<LeavesCalendarResponse>();
+				for(Leaves leaves : lstLeaves) {
+					LeavesCalendarResponse resp = new LeavesCalendarResponse();
+					resp.setId(leaves.getIdLeaves());
+					resp.setName(leaves.getEmployee().getFirstName() + " " + leaves.getEmployee().getLastName());
+					resp.setLocation(leaves.getLeaveType().getLeaveType());
+					resp.setStartDate(dfDbToStr.format(leaves.getDtFrom()));
+					resp.setEndDate(dfDbToStr.format(leaves.getDtTo()));
+					lstLeavesResponse.add(resp);
+				}
 			}
+		} catch(Exception e) {
+			logger.error("Exception in service - getLeavesForCalendar",e);
 		}
 		return lstLeavesResponse;
 	}
@@ -75,12 +79,16 @@ public class LeavesServiceImpl implements LeavesService {
 	@Override
 	public Map<Integer, String> getAllLeaveTypes() {
 		Map<Integer, String> mapLeaveTypes=null;
-		List<LeaveType> lstLt = leavesDao.getAllLeaveTypes();
-		if(lstLt!=null) {
-			mapLeaveTypes = new HashMap<Integer, String>();
-			for(LeaveType lt : lstLt) {
-				mapLeaveTypes.put(lt.getIdLeaveType(), lt.getLeaveType());
+		try {
+			List<LeaveType> lstLt = leavesDao.getAllLeaveTypes();
+			if(lstLt!=null) {
+				mapLeaveTypes = new HashMap<Integer, String>();
+				for(LeaveType lt : lstLt) {
+					mapLeaveTypes.put(lt.getIdLeaveType(), lt.getLeaveType());
+				}
 			}
+		} catch(Exception e) {
+			logger.error("Exception in service - getAllLeaveTypes",e);
 		}
 		return mapLeaveTypes;
 	}

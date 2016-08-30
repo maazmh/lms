@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,9 @@ public class LoginController {
 	@Autowired
 	LoginService loginService;
 	
+	@Value("${exception.msg.standard}")
+	String standardExceptionMsg;
+	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView showLoginPage(HttpSession session, 
 			@ModelAttribute("loginForm") LoginForm loginForm) {
@@ -32,9 +36,14 @@ public class LoginController {
 	public ModelAndView login(HttpSession session, 
 			@ModelAttribute("loginForm") LoginForm loginForm) {
 		ModelAndView model = new ModelAndView("login");
-		Integer empId = loginService.login(loginForm.getUsername(), loginForm.getPassword());
-		logger.info("empId: {}", empId);
-		session.setAttribute("employeeId", empId);
+		try {
+			Integer empId = loginService.login(loginForm.getUsername(), loginForm.getPassword());
+			logger.info("empId: {}", empId);
+			session.setAttribute("employeeId", empId);
+		} catch(Exception e) {
+			logger.error("Exception in login",e);
+			model.addObject("exceptionMessage", standardExceptionMsg);
+		}
 		return model;
 	}
 }

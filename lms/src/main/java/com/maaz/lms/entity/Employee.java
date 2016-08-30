@@ -33,6 +33,7 @@ public class Employee implements Serializable {
 	private boolean isDeleted;
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
+	private Set<Leaves> leaves = new HashSet<Leaves>();
 	
 	private Department department;
 	
@@ -110,5 +111,14 @@ public class Employee implements Serializable {
 	}
 	public void setDepartment(Department department) {
 		this.department = department;
+	}
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
+	@OrderBy
+	public Set<Leaves> getLeaves() {
+		return leaves;
+	}
+	public void setLeaves(Set<Leaves> leaves) {
+		this.leaves = leaves;
 	}
 }

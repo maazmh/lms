@@ -28,6 +28,7 @@ import com.maaz.lms.form.LeavesForm;
 import com.maaz.lms.util.Constants;
 import com.maaz.lms.util.DateUtils;
 import com.maaz.lms.vo.LeavesCalendarResponse;
+import com.maaz.lms.vo.LeavesVo;
 
 @Service
 public class LeavesServiceImpl implements LeavesService {
@@ -231,6 +232,72 @@ public class LeavesServiceImpl implements LeavesService {
 		} catch(Exception e) {
 			logger.error("Exception in saveLeave Service",e);
 		}
+	}
+
+	@Override
+	public List<LeavesVo> getPendingLeaveApprovals(Integer approverId) {
+		try {
+			List<LeavesVo> lstLeavesVo = new ArrayList<LeavesVo>();
+			List<Leaves> lstLeaves = leavesDao.getPendingLeaveApprovals(approverId);
+			for(Leaves leave : lstLeaves) {
+				/*
+				 * Check in the approvals table. If this approver (with approverId) has approved the list or not.
+				 * If he has approved the leave, do not add it to the List of LeavesVo otherwise add it. 
+				 * */
+				boolean isLeaveApprovedByThisApprover = false;
+				Set<LeaveApprovals> approvals = leave.getLeaveApprovals();
+				Iterator<LeaveApprovals> itr = approvals.iterator();
+				while(itr.hasNext()) {
+					LeaveApprovals leaveApproval = itr.next();
+					if(leaveApproval.getApprover().getIdEmployee().equals(approverId)) {
+						isLeaveApprovedByThisApprover = true;
+					}
+				}
+				/*
+				 * If leave is not approved by the approverId then add this leave to the list.
+				 * */
+				if(!isLeaveApprovedByThisApprover) {
+					LeavesVo vo = new LeavesVo();
+					vo.setEmployeeId(leave.getEmployee().getIdEmployee());
+					vo.setEmployeeName(leave.getEmployee().getFirstName() + " " + leave.getEmployee().getLastName());
+					vo.setIdLeave(leave.getIdLeaves());
+					vo.setDtAppliedOn(dfStrToDb.format(leave.getDtAppliedOn()));
+					vo.setDtFrom(dfStrToDb.format(leave.getDtFrom()));
+					vo.setDtTo(dfStrToDb.format(leave.getDtTo()));
+					vo.setLeaveType(leave.getLeaveType().getLeaveType());
+					vo.setLeaveDescription(leave.getLeaveDescription());
+					lstLeavesVo.add(vo);
+				}
+			}
+			return lstLeavesVo;
+		} catch(Exception e) {
+			logger.error("Exception in service getPendingLeaveApprovals",e);
+		}
+		return null;
+	}
+
+	@Override
+	public void approveLeave(Integer leaveId, Integer approverId) {
+		LeaveApprovals la = new LeaveApprovals();
+		Employee approver = loginDao.getEmployee(approverId);
+		Leaves leave = leavesDao.getLeaveById(leaveId);
+		la.setApprover(approver);
+		la.setDtUpdated(new Date());
+		la.setIsApproved(true);
+		la.setLeave(leave);
+		leavesDao.saveOrUpdateLeaveApprovals(la);
+	}
+	
+	@Override
+	public void rejectLeave(Integer leaveId, Integer approverId) {
+		LeaveApprovals la = new LeaveApprovals();
+		Employee approver = loginDao.getEmployee(approverId);
+		Leaves leave = leavesDao.getLeaveById(leaveId);
+		la.setApprover(approver);
+		la.setDtUpdated(new Date());
+		la.setIsApproved(false);
+		la.setLeave(leave);
+		leavesDao.saveOrUpdateLeaveApprovals(la);
 	}
 
 }

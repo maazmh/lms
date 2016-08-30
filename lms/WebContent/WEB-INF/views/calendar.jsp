@@ -160,6 +160,7 @@ function cancelModal() {
 					</td>
 				</tr>
 			</table>
+			<hr>
 			<table width="100%">
 				<tr>
 					<td width="50%">

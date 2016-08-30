@@ -1,5 +1,6 @@
 package com.maaz.lms.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.maaz.lms.entity.Approvers;
+import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
 import com.maaz.lms.entity.Leaves;
 import com.maaz.lms.util.HibernateUtil;
@@ -67,6 +70,53 @@ public class LeavesDaoImpl implements LeavesDao {
 			return leaveId;
 		} catch(Exception e) {
 			logger.error("DAO Exception saveLeave",e);
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+
+	@Override
+	public List<Leaves> getPendingLeaveApprovals(Integer approverId) {
+		try {
+			List<Leaves> leaves = new ArrayList<Leaves>();
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from Approvers where idApprover = :approverId");
+			query.setParameter("approverId", approverId);
+			List<Approvers> list = query.list();
+			for(Approvers approver : list) {
+				leaves.addAll(approver.getEmployee().getLeaves());
+			}
+			logger.info("list size: {}", list!=null ? list.size() : null);
+			return leaves;
+		} catch(Exception e) {
+			logger.error("getPendingLeaveApprovals Exception",e);
+			return null;
+		}
+	}
+
+	@Override
+	public void saveOrUpdateLeaveApprovals(LeaveApprovals la) {
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			session.saveOrUpdate(la);
+		} catch(Exception e) {
+			logger.error("approveLeave Exception",e);
+		} finally {
+			session.close();
+		}
+		
+	}
+
+	@Override
+	public Leaves getLeaveById(Integer leaveId) {
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			return (Leaves) session.get(Leaves.class, leaveId);
+		} catch(Exception e) {
+			logger.error("approveLeave Exception",e);
 		} finally {
 			session.close();
 		}

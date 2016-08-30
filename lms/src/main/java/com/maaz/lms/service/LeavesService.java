@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.maaz.lms.form.LeavesForm;
 import com.maaz.lms.vo.LeavesCalendarResponse;
+import com.maaz.lms.vo.LeavesVo;
 
 public interface LeavesService {
 	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer employeeId);
@@ -14,4 +15,10 @@ public interface LeavesService {
 	public LeavesForm getLeavesForForm(LeavesForm form, Integer employeeId);
 
 	public void saveLeave(LeavesForm leavesForm);
+
+	public List<LeavesVo> getPendingLeaveApprovals(Integer approverId);
+
+	public void approveLeave(Integer leaveId, Integer approverId);
+	
+	public void rejectLeave(Integer leaveId, Integer approverId);
 }

@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -31,6 +33,8 @@ public class Employee implements Serializable {
 	private boolean isDeleted;
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
+	
+	private Department department;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -97,5 +101,14 @@ public class Employee implements Serializable {
 	}
 	public void setApprovers(Set<Approvers> approvers) {
 		this.approvers = approvers;
+	}
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="departmentId")
+	public Department getDepartment() {
+		return department;
+	}
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 }

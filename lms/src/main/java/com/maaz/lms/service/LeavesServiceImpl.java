@@ -103,6 +103,7 @@ public class LeavesServiceImpl implements LeavesService {
 				form.setEmployeeId(emp.getIdEmployee());
 				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
 				form.setLeavesAllocated(emp.getAllocatedLeaves());
+				form.setCarriedForwardLeaves(emp.getCarriedForwardLeaves());
 				
 				Integer leavesAllocated = emp.getAllocatedLeaves();
 				Integer leavesUsed = 0;

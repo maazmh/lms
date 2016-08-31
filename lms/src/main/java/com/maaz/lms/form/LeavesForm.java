@@ -9,6 +9,7 @@ public class LeavesForm {
 	private String leaveReason;
 	
 	private Integer leavesAllocated;
+	private Integer carriedForwardLeaves;
 	private Integer leavesUsed;
 	private Integer leavesRemaining;
 	private Integer sickLeavesUsed;
@@ -87,5 +88,11 @@ public class LeavesForm {
 	}
 	public void setLeavesPendingApproval(Integer leavesPendingApproval) {
 		this.leavesPendingApproval = leavesPendingApproval;
+	}
+	public Integer getCarriedForwardLeaves() {
+		return carriedForwardLeaves;
+	}
+	public void setCarriedForwardLeaves(Integer carriedForwardLeaves) {
+		this.carriedForwardLeaves = carriedForwardLeaves;
 	}
 }

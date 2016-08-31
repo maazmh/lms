@@ -29,6 +29,7 @@ public class Employee implements Serializable {
 	private String lastName;
 	private String emailId;
 	private Integer allocatedLeaves;
+	private Integer carriedForwardLeaves;
 	private boolean isAdmin;
 	private boolean isDeleted;
 	
@@ -120,5 +121,13 @@ public class Employee implements Serializable {
 	}
 	public void setLeaves(Set<Leaves> leaves) {
 		this.leaves = leaves;
+	}
+	
+	@Column(name = "carriedForwardLeaves")
+	public Integer getCarriedForwardLeaves() {
+		return carriedForwardLeaves;
+	}
+	public void setCarriedForwardLeaves(Integer carriedForwardLeaves) {
+		this.carriedForwardLeaves = carriedForwardLeaves;
 	}
 }

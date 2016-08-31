@@ -7,6 +7,7 @@ import com.maaz.lms.vo.LeavesVo;
 public class ApprovalForm {
 	private List<LeavesVo> leaves;
 	private Integer leaveId;
+	private String note;
 
 	public List<LeavesVo> getLeaves() {
 		return leaves;
@@ -22,5 +23,13 @@ public class ApprovalForm {
 
 	public void setLeaveId(Integer leaveId) {
 		this.leaveId = leaveId;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 }

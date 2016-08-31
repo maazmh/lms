@@ -50,6 +50,12 @@ public class LeavesServiceImpl implements LeavesService {
 	@Value("${mail.first.approval.body}")
 	String emailBody;
 	
+	@Value("${mail.leave.rejection.subject}")
+	String leaveRejectionEmailSubject;
+	
+	@Value("${mail.leave.rejection.body}")
+	String leaveRejectionEmailBody;
+	
 	
 	DateFormat dfDbToStr = new SimpleDateFormat("yyyy-MM-dd"); 
 	DateFormat dfStrToDb = new SimpleDateFormat("dd-MM-yyyy"); 
@@ -278,27 +284,94 @@ public class LeavesServiceImpl implements LeavesService {
 	}
 
 	@Override
-	public void approveLeave(Integer leaveId, Integer approverId) {
-		LeaveApprovals la = new LeaveApprovals();
-		Employee approver = loginDao.getEmployee(approverId);
-		Leaves leave = leavesDao.getLeaveById(leaveId);
-		la.setApprover(approver);
-		la.setDtUpdated(new Date());
-		la.setIsApproved(true);
-		la.setLeave(leave);
-		leavesDao.saveOrUpdateLeaveApprovals(la);
+	public void approveLeave(Integer leaveId, Integer approverId, String notes) {
+		try {
+			logger.info("approveLeave - leaveId: {}, approverId: {}", leaveId, approverId);
+			LeaveApprovals la = new LeaveApprovals();
+			Employee approver = loginDao.getEmployee(approverId);
+			Leaves leave = leavesDao.getLeaveById(leaveId);
+			la.setApprover(approver);
+			la.setDtUpdated(new Date());
+			la.setIsApproved(true);
+			la.setLeave(leave);
+			la.setNotes(notes);
+			leavesDao.saveOrUpdateLeaveApprovals(la);
+			
+			leave = leavesDao.getLeaveById(leaveId); //This is done again to load the list of leaveapprovals.
+			/*
+			 * Once approved. Check any more approvers left to approve this leave.
+			 * */
+			Set<Approvers> approvers = leave.getEmployee().getApprovers();
+			Set<LeaveApprovals> approvals = leave.getLeaveApprovals();
+			boolean mailSentToNextApprover = false;
+			boolean isNextApprover = false;
+			
+			Iterator<Approvers> itrApprovers = approvers.iterator();
+			while(itrApprovers.hasNext() && !mailSentToNextApprover) {
+				Approvers appr = itrApprovers.next();
+				Integer approverIdFromListOfApprovers = appr.getApprover().getIdEmployee();
+				isNextApprover = true;
+				/*
+				 * Check in the set of approvals if the above appr.getApproverId has approved the leave. If approved loop next. 
+				 * If not approved come out of loop and send email to that approver. 
+				 * */
+				Iterator<LeaveApprovals> itrLeaveApprovals = approvals.iterator();
+				while(itrLeaveApprovals.hasNext() && !mailSentToNextApprover) {
+					LeaveApprovals leaveApproval = itrLeaveApprovals.next();
+					Integer approverIdInLeaveApproval = leaveApproval.getApprover().getIdEmployee();
+					if(approverIdFromListOfApprovers.equals(approverIdInLeaveApproval)) {
+						isNextApprover = false;
+					}
+				}
+				
+				if(isNextApprover) {
+					String emailTo = appr.getApprover().getEmailId();
+					String[] emailCc = {leave.getEmployee().getEmailId()};
+					
+					String subject = MessageFormat.format(emailSubject, leave.getEmployee().getFirstName());
+					String body = MessageFormat.format(emailBody, appr.getApprover().getFirstName(), 
+							leave.getLeaveType().getLeaveType(), leave.getEmployee().getFirstName(), 
+							dfStrToDb.format(leave.getDtFrom()), dfStrToDb.format(leave.getDtTo()));
+					emailService.sendEmail(emailTo, emailCc, body, subject);
+					mailSentToNextApprover = true;
+				}
+			}
+			
+			logger.info("Leave id: {} Approved by: {} successfully and email sent to next approver.", leaveId, approverId);
+		} catch(Exception e) {
+			logger.error("Exception in service approveLeave",e);
+		}
 	}
 	
 	@Override
-	public void rejectLeave(Integer leaveId, Integer approverId) {
-		LeaveApprovals la = new LeaveApprovals();
-		Employee approver = loginDao.getEmployee(approverId);
-		Leaves leave = leavesDao.getLeaveById(leaveId);
-		la.setApprover(approver);
-		la.setDtUpdated(new Date());
-		la.setIsApproved(false);
-		la.setLeave(leave);
-		leavesDao.saveOrUpdateLeaveApprovals(la);
+	public void rejectLeave(Integer leaveId, Integer approverId, String rejectionNotes) {
+		try {
+			logger.info("rejectLeave - leaveId: {}, approverId: {}", leaveId, approverId);
+			LeaveApprovals la = new LeaveApprovals();
+			Employee approver = loginDao.getEmployee(approverId);
+			Leaves leave = leavesDao.getLeaveById(leaveId);
+			la.setApprover(approver);
+			la.setDtUpdated(new Date());
+			la.setIsApproved(false);
+			la.setLeave(leave);
+			la.setNotes(rejectionNotes);
+			leavesDao.saveOrUpdateLeaveApprovals(la);
+			
+			/*
+			 * Send Rejection Email.
+			 * */
+			String emailTo = leave.getEmployee().getEmailId();
+			String[] emailCc = {approver.getEmailId()};
+			
+			String subject = leaveRejectionEmailSubject;
+			String body = MessageFormat.format(leaveRejectionEmailBody, leave.getEmployee().getFirstName(), 
+					leave.getLeaveType().getLeaveType(), approver.getFirstName(), 
+					dfStrToDb.format(leave.getDtFrom()), dfStrToDb.format(leave.getDtTo()), rejectionNotes);
+			emailService.sendEmail(emailTo, emailCc, body, subject);
+			
+		} catch(Exception e) {
+			logger.error("Exception in service approveLeave",e);
+		}
 	}
 
 }

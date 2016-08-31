@@ -38,6 +38,7 @@ function reject(leaveId, empName, from, to, leaveType) {
 function saveChanges() {
 	var leaveId = document.getElementById('leaveId').value;
 	var selectAction = document.getElementById('selectedAction').value;
+	document.getElementById('note').value = document.getElementById('notes').value;
 	
 	var form = document.getElementById('approvalForm');
 	if(selectAction=='A') {
@@ -47,13 +48,17 @@ function saveChanges() {
 		form.submit();
 	} 
 }
+
+function setupNavBar() {
+	$('#navBarLiApproval').addClass('active');
+	$('#navBarLiCalendar').removeClass('active');
+	$('#navBarLiAdmin').removeClass('active');
+}
 </script>
 </head>
-<body>
-	<div class="container" style="padding-top: 25px;">
-		<div id="divHeader">
-			<img alt="Mondia Media" src="http://www.mondiamedia.com/fileadmin/templates/img/logo-print.png" height="30px;">
-		</div>
+<body onload="setupNavBar();">
+	<%@ include file="navbar.html" %>
+	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="approve" modelAttribute="approvalForm" commandName="approvalForm" cssClass="form-signin">
 			<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">
 		        <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -63,6 +68,7 @@ function saveChanges() {
 			<p id="errorMsgP" class="bg-danger">${errorMessage}</p>
 			<p class="bg-success">${successMessage}</p>
 			<form:hidden path="leaveId"/>
+			<form:hidden path="note"/>
 			<input type="hidden" id="selectedAction"/>
 			
 			<table class="table table-hover">
@@ -115,6 +121,11 @@ function saveChanges() {
 	      </div>
 	      <div class="modal-body">
 	        <p>Click Save Changes to <b><span id="spanAction"></span></b> <b><span id="spanLeaveType"></span></b> Leave for <b><span id="spanEmpName"></span></b> for Dates: <b><span id="spanDtFrom"></span></b> to <b><span id="spanDtTo"></span></b></p>
+	      	<br>
+	      	<div class="form-group">
+	            <label for="message-text" class="control-label">Note:</label>
+	            <textarea class="form-control" id="notes"></textarea>
+	          </div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -120,12 +120,19 @@ function cancelModal() {
 	document.getElementById("divConfirmationMessage").style.display="none";
 	document.getElementById("myModalLabel").innerHTML = "Confirmation";
 }
+
+function setupNavBar() {
+	$('#navBarLiCalendar').addClass('active');
+	$('#navBarLiApproval').removeClass('active');
+	$('#navBarLiAdmin').removeClass('active');
+}
 </script>
 	
 <title>Calendar</title>
 </head>
-<body onload="getData();">
-	<div class="container" style="padding-top: 25px;">
+<body onload="setupNavBar();getData();">
+	<%@ include file="navbar.html" %>
+	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
 			<form:hidden path="employeeId"/>
 			<form:hidden path="leavesAllocated"/>
@@ -156,6 +163,8 @@ function cancelModal() {
 							<p class="form-control-static"><c:out value="${leavesForm.leavesRemaining}"/></p>
 							<label>Unpaid Leaves</label>
 							<p class="form-control-static"><c:out value="${leavesForm.unpaidLeavesUsed}"/></p>
+							<label>Leaves Carried Forward</label>
+							<p class="form-control-static"><c:out value="${leavesForm.carriedForwardLeaves}"/></p>
 						</div>
 					</td>
 				</tr>
@@ -173,7 +182,7 @@ function cancelModal() {
 <!-- 							    <input type="text" class="form-control" > -->
 							    <form:input path="dtTo" cssClass="form-control"  placeholder="Leave To" />
 							</div>
-							<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" onclick="return validate();">Apply Leave</button>
+							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="return validate();">Apply Leave</button>
 						</div>
 					</td>
 					<td>

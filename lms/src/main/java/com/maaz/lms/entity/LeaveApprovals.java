@@ -28,6 +28,7 @@ public class LeaveApprovals implements Serializable{
 	private Employee approver;
 	private Boolean isApproved;
 	private Date dtUpdated;
+	private String notes;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -72,5 +73,13 @@ public class LeaveApprovals implements Serializable{
 	}
 	public void setDtUpdated(Date dtUpdated) {
 		this.dtUpdated = dtUpdated;
+	}
+	
+	@Column(name = "notes")
+	public String getNotes() {
+		return notes;
+	}
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 }

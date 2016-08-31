@@ -30,6 +30,12 @@ public class LeavesController {
 	@Value("${exception.msg.standard}")
 	String standardExceptionMsg;
 	
+	@Value("${msg.leave.approved}")
+	String leaveApprovedMessage;
+	
+	@Value("${msg.leave.rejected}")
+	String leaveRejectedMessage;
+	
 	@RequestMapping(value = "/calendar", method = RequestMethod.GET)
 	public ModelAndView showCalendar(HttpSession session, 
 			@ModelAttribute("leavesForm") LeavesForm leavesForm) {
@@ -116,8 +122,9 @@ public class LeavesController {
 			empId = 2;
 			
 			Integer approverId = empId;
-			lService.approveLeave(approvalForm.getLeaveId(), approverId);
+			lService.approveLeave(approvalForm.getLeaveId(), approverId, approvalForm.getNote());
 			
+			model.addObject("successMessage", leaveApprovedMessage);
 		} catch(Exception e) {
 			logger.error("Exception in approveLeave",e);
 			model.addObject("exceptionMessage", standardExceptionMsg);
@@ -137,8 +144,8 @@ public class LeavesController {
 			empId = 2;
 			
 			Integer approverId = empId;
-			lService.rejectLeave(approvalForm.getLeaveId(), approverId);
-			
+			lService.rejectLeave(approvalForm.getLeaveId(), approverId, approvalForm.getNote());
+			model.addObject("successMessage", leaveRejectedMessage);
 		} catch(Exception e) {
 			logger.error("Exception in rejectLeave",e);
 			model.addObject("exceptionMessage", standardExceptionMsg);

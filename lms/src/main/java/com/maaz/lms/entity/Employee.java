@@ -1,6 +1,7 @@
 package com.maaz.lms.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "Employee")
@@ -32,6 +35,7 @@ public class Employee implements Serializable {
 	private Integer carriedForwardLeaves;
 	private boolean isAdmin;
 	private boolean isDeleted;
+	private Date lastLogin;
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
 	private Set<Leaves> leaves = new HashSet<Leaves>();
@@ -129,5 +133,14 @@ public class Employee implements Serializable {
 	}
 	public void setCarriedForwardLeaves(Integer carriedForwardLeaves) {
 		this.carriedForwardLeaves = carriedForwardLeaves;
+	}
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "lastLogin")
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 }

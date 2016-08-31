@@ -18,7 +18,7 @@ public interface LeavesService {
 
 	public List<LeavesVo> getPendingLeaveApprovals(Integer approverId);
 
-	public void approveLeave(Integer leaveId, Integer approverId);
+	public void approveLeave(Integer leaveId, Integer approverId, String notes);
 	
-	public void rejectLeave(Integer leaveId, Integer approverId);
+	public void rejectLeave(Integer leaveId, Integer approverId, String rejectionNotes);
 }

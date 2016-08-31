@@ -25,6 +25,9 @@ public class LoginController {
 	@Value("${exception.msg.standard}")
 	String standardExceptionMsg;
 	
+	@Value("${login.failed.msg}")
+	String loginFailedMessage;
+	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView showLoginPage(HttpSession session, 
 			@ModelAttribute("loginForm") LoginForm loginForm) {
@@ -38,8 +41,13 @@ public class LoginController {
 		ModelAndView model = new ModelAndView("login");
 		try {
 			Integer empId = loginService.login(loginForm.getUsername(), loginForm.getPassword());
-			logger.info("empId: {}", empId);
-			session.setAttribute("employeeId", empId);
+			if(empId!=null) {
+				logger.info("empId: {}", empId);
+				session.setAttribute("employeeId", empId);
+				model.setViewName("redirect:/calendar");
+			} else {
+				model.addObject("loginFailedMessage", loginFailedMessage);
+			}
 		} catch(Exception e) {
 			logger.error("Exception in login",e);
 			model.addObject("exceptionMessage", standardExceptionMsg);

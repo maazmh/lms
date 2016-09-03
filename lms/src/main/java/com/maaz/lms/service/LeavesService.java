@@ -12,7 +12,7 @@ public interface LeavesService {
 
 	public Map<Integer, String> getAllLeaveTypes();
 	
-	public LeavesForm getLeavesForForm(LeavesForm form, Integer employeeId);
+	public LeavesForm getLeavesForForm(LeavesForm form, Integer employeeId, Integer year);
 
 	public void saveLeave(LeavesForm leavesForm);
 

@@ -13,11 +13,11 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
 <script	src="/lms/resources/js/bootstrap-year-calendar.js"></script>
 <script	src="/lms/resources/js/bootstrap-year-calendar-custom-code.js"></script>
 <script	src="http://www.bootstrap-year-calendar.com/js/bootstrap-popover.js"></script>
 <script	src="http://www.bootstrap-year-calendar.com/js/respond.min.js"></script>
-<script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
 <script	src="/lms/resources/js/date-util.js"></script>
 
 <script type="text/javascript">
@@ -112,7 +112,10 @@ function validate() {
 }
 
 function saveLeaves() {
-	document.getElementById('leavesForm').submit();
+	var form = document.getElementById('leavesForm');
+	form.setAttribute("method", 'post');
+    form.setAttribute("action", 'saveLeave');
+	form.submit();
 }
 
 function cancelModal() {
@@ -126,11 +129,34 @@ function setupNavBar() {
 	$('#navBarLiApproval').removeClass('active');
 	$('#navBarLiAdmin').removeClass('active');
 }
+
+function init() {
+	//Bind yearChanged event and set the 'year' hidden variable to the changed year from calendar.
+	$('#calendar').bind('yearChanged', function(e){ 
+		
+		$("#year").val($('#calendar').data('calendar').getYear());
+		
+		var form = document.getElementById('leavesForm');
+		form.setAttribute("method", 'get');
+	    form.setAttribute("action", 'calendar');
+		form.submit();
+	});
+	
+	//Setup Menu/NavBar
+	setupNavBar();
+	
+	//alert($('#calendar').data('calendar').getYear());
+	
+	//Get data to render the calendar
+	//$('#calendar').data('calendar').setYear($("#year").val());
+	//$('#calendar').calendar({startYear:$("#year").val()});
+	getData();
+}
 </script>
 	
 <title>Calendar</title>
 </head>
-<body onload="setupNavBar();getData();">
+<body onload="init();">
 	<%@ include file="navbar.html" %>
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
@@ -141,6 +167,7 @@ function setupNavBar() {
 			<form:hidden path="sickLeavesUsed"/>
 			<form:hidden path="unpaidLeavesUsed"/>
 			<form:hidden path="leavesPendingApproval"/>
+			<form:hidden path="year"/>
 			<table width="100%">
 				<tr>
 					<td>

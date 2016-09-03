@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -101,9 +102,21 @@ public class LeavesServiceImpl implements LeavesService {
 	}
 
 	@Override
-	public LeavesForm getLeavesForForm(LeavesForm form, Integer employeeId) {
+	public LeavesForm getLeavesForForm(LeavesForm form, Integer employeeId, Integer year) {
 		try {
-			List<Leaves> lstLeaves = leavesDao.getLeaves(employeeId);
+			/*
+			 * Set first and last day of year so that leaves will be recieved only for that year.
+			 * */
+			Calendar firstDayOfYear = Calendar.getInstance();
+			firstDayOfYear.set(Calendar.YEAR, year);
+			firstDayOfYear.set(Calendar.MONTH, 01);
+			firstDayOfYear.set(Calendar.DAY_OF_MONTH, 01);
+			Calendar lastDayOfYear = Calendar.getInstance();
+			lastDayOfYear.set(Calendar.YEAR, year);
+			lastDayOfYear.set(Calendar.MONTH, 11);
+			lastDayOfYear.set(Calendar.DAY_OF_MONTH, 31);
+			
+			List<Leaves> lstLeaves = leavesDao.getLeaves(employeeId, firstDayOfYear.getTime(), lastDayOfYear.getTime());
 			if(lstLeaves!=null && lstLeaves.size() > 0) {
 				Employee emp = lstLeaves.get(0).getEmployee();
 				form.setEmployeeId(emp.getIdEmployee());
@@ -164,6 +177,20 @@ public class LeavesServiceImpl implements LeavesService {
 				form.setLeavesPendingApproval(leavesPendingApproval);
 				form.setSickLeavesUsed(sickLeavesUsed);
 				form.setUnpaidLeavesUsed(unpaidLeavesUsed);
+			} else {
+				//No Leaves found.
+				Employee emp = loginDao.getEmployee(employeeId);
+				form.setEmployeeId(emp.getIdEmployee());
+				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+				form.setLeavesAllocated(emp.getAllocatedLeaves());
+				form.setCarriedForwardLeaves(emp.getCarriedForwardLeaves());
+				
+				form.setLeavesAllocated(null);
+				form.setLeavesUsed(null);
+				form.setLeavesRemaining(null);
+				form.setLeavesPendingApproval(null);
+				form.setSickLeavesUsed(null);
+				form.setUnpaidLeavesUsed(null);
 			}
 		} catch(Exception e) {
 			logger.error("Exception in getLeavesForForm Service", e);

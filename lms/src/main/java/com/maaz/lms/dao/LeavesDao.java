@@ -1,5 +1,6 @@
 package com.maaz.lms.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.maaz.lms.entity.LeaveApprovals;
@@ -20,4 +21,6 @@ public interface LeavesDao {
 	public void saveOrUpdateLeaveApprovals(LeaveApprovals la);
 
 	public Leaves getLeaveById(Integer leaveId);
+	
+	public List<Leaves> getLeaves(Integer employeeId, Date dtFrom, Date dtTo);
 }

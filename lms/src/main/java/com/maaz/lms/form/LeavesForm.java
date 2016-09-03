@@ -7,6 +7,7 @@ public class LeavesForm {
 	private String dtTo;
 	private Integer leaveType;
 	private String leaveReason;
+	private Integer year;
 	
 	private Integer leavesAllocated;
 	private Integer carriedForwardLeaves;
@@ -94,5 +95,11 @@ public class LeavesForm {
 	}
 	public void setCarriedForwardLeaves(Integer carriedForwardLeaves) {
 		this.carriedForwardLeaves = carriedForwardLeaves;
+	}
+	public Integer getYear() {
+		return year;
+	}
+	public void setYear(Integer year) {
+		this.year = year;
 	}
 }

@@ -36,6 +36,7 @@ public class Employee implements Serializable {
 	private boolean isAdmin;
 	private boolean isDeleted;
 	private Date lastLogin;
+	private CompanyAccount company;
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
 	private Set<Leaves> leaves = new HashSet<Leaves>();
@@ -142,5 +143,14 @@ public class Employee implements Serializable {
 	}
 	public void setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
+	}
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="idCompanyAccount")
+	public CompanyAccount getCompany() {
+		return company;
+	}
+	public void setCompany(CompanyAccount company) {
+		this.company = company;
 	}
 }

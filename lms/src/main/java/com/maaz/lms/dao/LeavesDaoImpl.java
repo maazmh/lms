@@ -1,6 +1,7 @@
 package com.maaz.lms.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -27,6 +28,24 @@ public class LeavesDaoImpl implements LeavesDao {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Query query = session.createQuery("from Leaves where employee.idEmployee = :idEmployee");
 			query.setParameter("idEmployee", employeeId);
+			List<Leaves> list = query.list();
+			logger.info("list size: {}", list!=null ? list.size() : null);
+			return list;
+		} catch(Exception e) {
+			logger.error("Login Exception",e);
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Leaves> getLeaves(Integer employeeId, Date dtFrom, Date dtTo) {
+		try {
+			logger.info("EmployeeId: {}, dtFrom, dtTo", new Object[] {employeeId, dtFrom, dtTo});
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from Leaves where employee.idEmployee = :idEmployee and dtFrom between :dtFrom and :dtTo");
+			query.setParameter("idEmployee", employeeId);
+			query.setParameter("dtFrom", dtFrom);
+			query.setParameter("dtTo", dtTo);
 			List<Leaves> list = query.list();
 			logger.info("list size: {}", list!=null ? list.size() : null);
 			return list;

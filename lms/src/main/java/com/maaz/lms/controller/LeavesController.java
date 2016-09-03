@@ -1,5 +1,6 @@
 package com.maaz.lms.controller;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,11 @@ public class LeavesController {
 			Map<Integer, String> mapLeaveTypes = lService.getAllLeaveTypes();
 			model.addObject("leaveTypes", mapLeaveTypes);
 			
-			leavesForm = lService.getLeavesForForm(leavesForm, empId);
+			if(leavesForm.getYear()==null) {
+				leavesForm.setYear(Calendar.getInstance().get(Calendar.YEAR));
+			}
+			logger.info("leavesForm.getYear(): {}", leavesForm.getYear());
+			leavesForm = lService.getLeavesForForm(leavesForm, empId, leavesForm.getYear());
 		} catch(Exception e) {
 			logger.error("Exception in showCalendar",e);
 			model.addObject("exceptionMessage", standardExceptionMsg);
@@ -75,7 +80,7 @@ public class LeavesController {
 			Map<Integer, String> mapLeaveTypes = lService.getAllLeaveTypes();
 			model.addObject("leaveTypes", mapLeaveTypes);
 			
-			leavesForm = lService.getLeavesForForm(leavesForm, empId);
+			leavesForm = lService.getLeavesForForm(leavesForm, empId, leavesForm.getYear());
 			
 			leavesForm.setDtFrom(null);
 			leavesForm.setDtTo(null);

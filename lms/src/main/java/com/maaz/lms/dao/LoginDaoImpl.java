@@ -49,4 +49,18 @@ public class LoginDaoImpl implements LoginDao {
 		return null;
 	}
 
+
+	@Override
+	public List<Employee> getAllEmployees(Integer companyAccountId) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from Employee where company.idCompanyAccount = :idCompanyAccount");
+			query.setParameter("idCompanyAccount", companyAccountId);
+			return query.list();
+		} catch(Exception e) {
+			logger.error("DAO Exception getLeaveType",e);
+		}
+		return null;
+	}
+
 }

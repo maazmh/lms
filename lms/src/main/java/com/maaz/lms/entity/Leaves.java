@@ -29,6 +29,7 @@ public class Leaves implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer idLeaves;
+	private FiscalYear fiscalYear;
 	private Employee employee;
 	private Date dtFrom;
 	private Date dtTo;
@@ -119,6 +120,13 @@ public class Leaves implements Serializable {
 		this.leaveApprovals = leaveApprovals;
 	}
 	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="fiscalYearId")
+	public FiscalYear getFiscalYear() {
+		return fiscalYear;
+	}
+	public void setFiscalYear(FiscalYear fiscalYear) {
+		this.fiscalYear = fiscalYear;
+	}
 	
-
 }

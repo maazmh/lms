@@ -39,6 +39,7 @@
  		<mapping class="com.maaz.lms.entity.LeaveApprovals"/>
  		<mapping class="com.maaz.lms.entity.Department"/>
  		<mapping class="com.maaz.lms.entity.CompanyAccount"/>
+ 		<mapping class="com.maaz.lms.entity.FiscalYear"/>
  		
  		 
     </session-factory>

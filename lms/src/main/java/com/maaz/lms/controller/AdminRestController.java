@@ -26,4 +26,10 @@ public class AdminRestController {
 	public AdminEmployeeVo getAllEmployees(@PathVariable Integer companyAccountId) {
 		return loginService.getAllEmployees(companyAccountId);
 	}
+	
+	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/getAllEmployeesTest/{companyAccountId}", method = RequestMethod.GET)
+	public String getAllEmployeesTest(@PathVariable Integer companyAccountId) {
+		String str = "{\"draw\":1,\"recordsTotal\":3,\"data\":[{\"idEmployee\":1,\"firstName\":\"Maaz\",\"lastName\":\"Hurzuk\",\"emailId\":null,\"department\":\"IT\",\"admin\":false},{\"idEmployee\":2,\"firstName\":\"Iyad\",\"lastName\":\"Farah\",\"emailId\":null,\"department\":\"IT\",\"admin\":false},{\"idEmployee\":3,\"firstName\":\"Scott\",\"lastName\":\"Weeman\",\"emailId\":null,\"department\":\"Management\",\"admin\":false},{\"idEmployee\":4,\"firstName\":\"Scott\",\"lastName\":\"Weeman\",\"emailId\":null,\"department\":\"Management\",\"admin\":false}]}";
+		return str;
+	}
 }

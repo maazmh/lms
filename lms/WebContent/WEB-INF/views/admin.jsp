@@ -36,100 +36,131 @@ function setupNavBar() {
 }
 
 function init() { 
-	$('#employee').DataTable( {
+	
+	var table = $('#employee').DataTable( {
 	    paging: true,
+        "pagingType": "simple",
 	    autowidth: true,
 	    ordering: true,
 	    searching:true,
 	    "processing": true,
         "serverSide": true,
-        "ajax": "${home}api/getAllEmployees/1"
-	} );
-}
-
-var editor; // use a global for the submit and return data rendering in the examples
-
-$(document).ready(function() {
-	editor = new $.fn.dataTable.Editor( {
-		table: "#employee",
-		fields: [ 
-		    {
-				label: "Id:",
-				name: "idEmployee"
-			},
-			{
-				label: "First Name:",
-				name: "firstName"
-			},
-			{
-				label: "Last Name:",
-				name: "lastName"
-			}, 
-			{
-				label: "Department:",
-				name: "department"
-			}, 
-			{
-				label: "Email Id:",
-				name: "emailId"
-			}
-		]
-	} );
-	
-	var table = $('#example').DataTable( {
+        "ajax": "${home}api/getAllEmployeesTest/1",
         columns: [
-			{ data: "idEmployee" },
-			{ data: "firstName" },
-			{ data: "lastName" },
+   			{ data: "idEmployee" },
+   			{ data: "firstName" },
+   			{ data: "lastName" },
             { data: "department" },
             { data: "emailId" }
-        ],
-        select: true
+           ],
+        select: true, 
+        fields: [ 
+     		    {
+     				label: "Id:",
+     				name: "idEmployee"
+     			},
+     			{
+     				label: "First Name:",
+     				name: "firstName"
+     			},
+     			{
+     				label: "Last Name:",
+     				name: "lastName"
+     			}, 
+     			{
+     				label: "Department:",
+     				name: "department"
+     			}, 
+     			{
+     				label: "Email Id:",
+     				name: "emailId"
+     			}
+     		]
+	} );
+	
+	var editor = new $.fn.dataTable.Editor( {
+        table: "#employee",
+        fields: [ 
+      		    {
+      				label: "Id:",
+      				name: "idEmployee"
+      			},
+      			{
+      				label: "First Name:",
+      				name: "firstName"
+      			},
+      			{
+      				label: "Last Name:",
+      				name: "lastName"
+      			}, 
+      			{
+      				label: "Department:",
+      				name: "department"
+      			}, 
+      			{
+      				label: "Email Id:",
+      				name: "emailId"
+      			}
+      		]
     } );
 	
-	// Display the buttons
+	//Display the buttons
 	new $.fn.dataTable.Buttons( table, [
 		{ extend: "create", editor: editor },
 		{ extend: "edit",   editor: editor },
 		{ extend: "remove", editor: editor }
 	] );
-
 	
-} 	);
+	$('#employee tbody').on('click', 'tr', function () {
+        var data = table.row( this ).data();
+        alert( 'You clicked on '+data[0]+'\'s row' );
+    } );
+}
 </script>
 </head>
 <body onload="init();setupNavBar();">
 	<%@ include file="navbar.html" %>
 	<div class="container" style="padding-top: 5em;">
-		<form:form method="post" action="save" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
-			<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">
-		        <a href="#" class="close" data-dismiss="alert">&times;</a>
-		        <strong>Error!</strong>
-		        <span id="jsErrorMessage"></span>
-		    </div>
-			<p id="errorMsgP" class="bg-danger">${errorMessage}</p>
-			<p class="bg-success">${successMessage}</p>
-			<table id="employee" class="table table-striped table-bordered" cellspacing="0" width="100%">
-				<thead>
-		            <tr>
-		            	<th>ID</th>
-		                <th>First Name</th>
-		                <th>Last Name</th>
-		                <th>Department</th>
-		                <th>Email ID</th>
-		            </tr>
-		        </thead>
-		        <tfoot>
-		            <tr>
-		                <th>ID</th>
-		                <th>First Name</th>
-		                <th>Last Name</th>
-		                <th>Department</th>
-		                <th>Email ID</th>
-		            </tr>
-		        </tfoot>
-			</table>
-		</form:form>
+		<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">
+	        <a href="#" class="close" data-dismiss="alert">&times;</a>
+	        <strong>Error!</strong>
+	        <span id="jsErrorMessage"></span>
+	    </div>
+		<p id="errorMsgP" class="bg-danger">${errorMessage}</p>
+		<p class="bg-success">${successMessage}</p>
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td width="50%">
+						<table id="employee" class="table table-striped table-bordered" cellspacing="0" width="100%">
+							<thead>
+					            <tr>
+					            	<th>ID</th>
+					                <th>First Name</th>
+					                <th>Last Name</th>
+					                <th>Department</th>
+					                <th>Email ID</th>
+					            </tr>
+					        </thead>
+					        <tfoot>
+					            <tr>
+					                <th>ID</th>
+					                <th>First Name</th>
+					                <th>Last Name</th>
+					                <th>Department</th>
+					                <th>Email ID</th>
+					            </tr>
+					        </tfoot>
+						</table>
+					</td>
+					<td width="50%">
+						<form:form method="post" action="save" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
+							
+						</form:form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 	
 	<!-- Confirmation Modal Dialog -->

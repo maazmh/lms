@@ -41,11 +41,11 @@ function init() {
 	    paging: true,
         "pagingType": "simple",
 	    autowidth: true,
-	    ordering: true,
+	    ordering: false,
 	    searching:true,
 	    "processing": true,
         "serverSide": true,
-        "ajax": "${home}api/getAllEmployeesTest/1",
+        "ajax": "${home}api/getAllEmployees/1",
         columns: [
    			{ data: "idEmployee" },
    			{ data: "firstName" },
@@ -78,42 +78,30 @@ function init() {
      		]
 	} );
 	
-	var editor = new $.fn.dataTable.Editor( {
-        table: "#employee",
-        fields: [ 
-      		    {
-      				label: "Id:",
-      				name: "idEmployee"
-      			},
-      			{
-      				label: "First Name:",
-      				name: "firstName"
-      			},
-      			{
-      				label: "Last Name:",
-      				name: "lastName"
-      			}, 
-      			{
-      				label: "Department:",
-      				name: "department"
-      			}, 
-      			{
-      				label: "Email Id:",
-      				name: "emailId"
-      			}
-      		]
-    } );
-	
-	//Display the buttons
-	new $.fn.dataTable.Buttons( table, [
-		{ extend: "create", editor: editor },
-		{ extend: "edit",   editor: editor },
-		{ extend: "remove", editor: editor }
-	] );
 	
 	$('#employee tbody').on('click', 'tr', function () {
-        var data = table.row( this ).data();
-        alert( 'You clicked on '+data[0]+'\'s row' );
+        //alert(table.row( this ).data().firstName);
+        var clickedRow = table.row( this ).data();
+        $('#pEmployeeName').html(clickedRow.firstName + ' ' + clickedRow.lastName);
+        $('#pDepartment').html(clickedRow.department);
+        var approvers;
+        for(var i in clickedRow.approvers) {
+        	//alert(clickedRow.approvers[i].idApprovers + " " + clickedRow.approvers[i].approverName);
+        	if(approvers==null) {
+        		approvers = clickedRow.approvers[i].approverName;
+        	} else {
+        		approvers = approvers + ', ' + clickedRow.approvers[i].approverName;
+        	}
+        }
+        $('#pApprovers').html(approvers);
+        $('#pUsername').html(clickedRow.username);
+        $('#pIsAdmin').html(clickedRow.admin);
+        //$('#pEmployeeName').html(clickedRow.department);
+        //$('#pEmployeeName').html(clickedRow.department);
+    } );
+	
+	$('#employee tbody').on('dblclick', 'tr', function () {
+        alert(table.row( this ).data().firstName);
     } );
 }
 </script>
@@ -142,20 +130,60 @@ function init() {
 					                <th>Email ID</th>
 					            </tr>
 					        </thead>
-					        <tfoot>
-					            <tr>
-					                <th>ID</th>
-					                <th>First Name</th>
-					                <th>Last Name</th>
-					                <th>Department</th>
-					                <th>Email ID</th>
-					            </tr>
-					        </tfoot>
 						</table>
 					</td>
-					<td width="50%">
+					<td width="50%" style="padding-top: 5em; padding-left: 3em;">
 						<form:form method="post" action="save" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
-							
+							<table width="100%">
+								<tr>
+									<td width="50%">
+										<label>Employee Name</label>
+									</td>
+									<td width="50%">
+										<p class="form-control-static" id="pEmployeeName"></p>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<label>Department</label>
+									</td>
+									<td width="50%">
+										<p class="form-control-static" id="pDepartment"></p>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<label>Approvers</label>
+									</td>
+									<td width="50%">
+										<p class="form-control-static" id="pApprovers"></p>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<label>Username</label>
+									</td>
+									<td width="50%">
+										<p class="form-control-static" id="pUsername"></p>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<label>Admin</label>
+									</td>
+									<td width="50%">
+										<p class="form-control-static" id="pIsAdmin"></p>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<label>Deleted</label>
+									</td>
+									<td width="50%">
+										<p class="form-control-static" id="pIsDeleted"></p>
+									</td>
+								</tr>
+							</table>
 						</form:form>
 					</td>
 				</tr>

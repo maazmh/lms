@@ -1,7 +1,5 @@
 package com.maaz.lms.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.maaz.lms.service.LoginService;
 import com.maaz.lms.vo.AdminEmployeeVo;
-import com.maaz.lms.vo.EmployeeVo;
 
 @RestController
 public class AdminRestController {

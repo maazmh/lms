@@ -1,5 +1,7 @@
 package com.maaz.lms.vo;
 
+import java.util.List;
+
 public class EmployeeVo {
 	private Integer idEmployee;
 	private String firstName;
@@ -7,6 +9,7 @@ public class EmployeeVo {
 	private String emailId;
 	private boolean isAdmin;
 	private String department;
+	private List<ApproverVo> approvers;
 	
 	public Integer getIdEmployee() {
 		return idEmployee;
@@ -43,6 +46,12 @@ public class EmployeeVo {
 	}
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+	public List<ApproverVo> getApprovers() {
+		return approvers;
+	}
+	public void setApprovers(List<ApproverVo> approvers) {
+		this.approvers = approvers;
 	}
 	
 }

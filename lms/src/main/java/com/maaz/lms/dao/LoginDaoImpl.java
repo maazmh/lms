@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -36,31 +35,4 @@ public class LoginDaoImpl implements LoginDao {
 			return null;
 		}
 	}
-
-
-	@Override
-	public Employee getEmployee(Integer employeeId) {
-		try {
-			Session session = HibernateUtil.getSessionFactory().openSession();
-			return (Employee) session.get(Employee.class, employeeId);
-		} catch(Exception e) {
-			logger.error("DAO Exception getLeaveType",e);
-		}
-		return null;
-	}
-
-
-	@Override
-	public List<Employee> getAllEmployees(Integer companyAccountId) {
-		try {
-			Session session = HibernateUtil.getSessionFactory().openSession();
-			Query query = session.createQuery("from Employee where company.idCompanyAccount = :idCompanyAccount");
-			query.setParameter("idCompanyAccount", companyAccountId);
-			return query.list();
-		} catch(Exception e) {
-			logger.error("DAO Exception getLeaveType",e);
-		}
-		return null;
-	}
-
 }

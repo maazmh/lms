@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.maaz.lms.dao.EmployeeDao;
 import com.maaz.lms.dao.LeavesDao;
-import com.maaz.lms.dao.LoginDao;
 import com.maaz.lms.entity.Approvers;
 import com.maaz.lms.entity.Employee;
 import com.maaz.lms.entity.LeaveApprovals;
@@ -40,7 +40,7 @@ public class LeavesServiceImpl implements LeavesService {
 	LeavesDao leavesDao;
 	
 	@Autowired
-	LoginDao loginDao;
+	EmployeeDao employeeDao;
 	
 	@Autowired
 	EmailService emailService;
@@ -179,7 +179,7 @@ public class LeavesServiceImpl implements LeavesService {
 				form.setUnpaidLeavesUsed(unpaidLeavesUsed);
 			} else {
 				//No Leaves found.
-				Employee emp = loginDao.getEmployee(employeeId);
+				Employee emp = employeeDao.getEmployee(employeeId);
 				form.setEmployeeId(emp.getIdEmployee());
 				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
 				form.setLeavesAllocated(emp.getAllocatedLeaves());
@@ -232,7 +232,7 @@ public class LeavesServiceImpl implements LeavesService {
 	public void saveLeave(LeavesForm leavesForm) {
 		try {
 			Leaves leave = new Leaves();
-			Employee emp = loginDao.getEmployee(leavesForm.getEmployeeId());
+			Employee emp = employeeDao.getEmployee(leavesForm.getEmployeeId());
 			leave.setEmployee(emp);
 			leave.setDtFrom(dfStrToDb.parse(leavesForm.getDtFrom()));
 			leave.setDtTo(dfStrToDb.parse(leavesForm.getDtTo()));
@@ -315,7 +315,7 @@ public class LeavesServiceImpl implements LeavesService {
 		try {
 			logger.info("approveLeave - leaveId: {}, approverId: {}", leaveId, approverId);
 			LeaveApprovals la = new LeaveApprovals();
-			Employee approver = loginDao.getEmployee(approverId);
+			Employee approver = employeeDao.getEmployee(approverId);
 			Leaves leave = leavesDao.getLeaveById(leaveId);
 			la.setApprover(approver);
 			la.setDtUpdated(new Date());
@@ -375,7 +375,7 @@ public class LeavesServiceImpl implements LeavesService {
 		try {
 			logger.info("rejectLeave - leaveId: {}, approverId: {}", leaveId, approverId);
 			LeaveApprovals la = new LeaveApprovals();
-			Employee approver = loginDao.getEmployee(approverId);
+			Employee approver = employeeDao.getEmployee(approverId);
 			Leaves leave = leavesDao.getLeaveById(leaveId);
 			la.setApprover(approver);
 			la.setDtUpdated(new Date());

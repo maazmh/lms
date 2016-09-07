@@ -35,5 +35,13 @@ public class AdminController {
 		model.addObject("mapDepts", mapDepts);
 		return model;
 	}
+	
+	@RequestMapping(value = "/save-employee", method = RequestMethod.POST)
+	public ModelAndView saveEmployee(HttpSession session, @ModelAttribute("adminForm") AdminForm form) {
+		ModelAndView model = new ModelAndView("redirect:/admin");
+		logger.debug("save-Employee");
+		commonService.saveEmployee(form);
+		return model;
+	}
 
 }

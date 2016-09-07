@@ -9,6 +9,7 @@ public class AdminForm implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Integer employeeId;
 	private String firstName;
 	private String lastName;
 	private Integer department;
@@ -58,5 +59,11 @@ public class AdminForm implements Serializable {
 	}
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
+	}
+	public Integer getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
 	}
 }

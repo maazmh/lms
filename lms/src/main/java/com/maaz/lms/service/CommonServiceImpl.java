@@ -15,6 +15,7 @@ import com.maaz.lms.dao.LoginDao;
 import com.maaz.lms.entity.Approvers;
 import com.maaz.lms.entity.Department;
 import com.maaz.lms.entity.Employee;
+import com.maaz.lms.form.AdminForm;
 import com.maaz.lms.vo.AdminDepartmentVo;
 import com.maaz.lms.vo.AdminEmployeeVo;
 import com.maaz.lms.vo.ApproverVo;
@@ -90,6 +91,31 @@ public class CommonServiceImpl implements CommonService {
 			}
 		}
 		return mapDepts;
+	}
+
+	@Override
+	public void saveEmployee(AdminForm form) {
+		Employee emp = null;
+		if(form.getEmployeeId()!=null) {
+			//update
+			emp = employeeDao.getEmployee(form.getEmployeeId());
+			emp.setIdEmployee(form.getEmployeeId());
+			emp.setFirstName(form.getFirstName());
+			emp.setLastName(form.getLastName());
+			emp.setEmailId(form.getEmailId());
+			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
+			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
+			
+		} else {
+			//new
+			emp = new Employee();
+			emp.setIdEmployee(form.getEmployeeId());
+			emp.setFirstName(form.getFirstName());
+			emp.setLastName(form.getLastName());
+			emp.setEmailId(form.getEmailId());
+			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
+			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
+		}
 	}
 
 }

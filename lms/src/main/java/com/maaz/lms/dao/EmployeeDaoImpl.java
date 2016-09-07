@@ -59,4 +59,20 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		return null;
 	}
 
+
+	@Override
+	public void saveOrUpdateEmployee(Employee emp) {
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			session.saveOrUpdate(emp);
+		} catch(Exception e) {
+			logger.error("DAO Exception saveOrUpdateEmployee",e);
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+	}
+
 }

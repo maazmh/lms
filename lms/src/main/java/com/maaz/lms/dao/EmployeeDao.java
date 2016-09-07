@@ -11,4 +11,6 @@ public interface EmployeeDao {
 	public List<Employee> getAllEmployees(Integer companyAccountId);
 
 	public List<Department> getAllDepartments();
+
+	public void saveOrUpdateEmployee(Employee emp);
 }

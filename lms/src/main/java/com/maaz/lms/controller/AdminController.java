@@ -33,6 +33,14 @@ public class AdminController {
 		logger.debug("showAdminPage");
 		Map<Integer, String> mapDepts = commonService.getAllDepartmentsMap();
 		model.addObject("mapDepts", mapDepts);
+		
+		//@ TODO: remove hardcoding for company account
+		form.setCompanyAccountId(1);
+		Map<Integer, String> mapApprovers = commonService.getEmployeesForDropDown(form.getCompanyAccountId());
+		model.addObject("mapApprovers", mapApprovers);
+		
+		form.setAdmin(0);
+		form.setDeleted(0);
 		return model;
 	}
 	
@@ -40,6 +48,8 @@ public class AdminController {
 	public ModelAndView saveEmployee(HttpSession session, @ModelAttribute("adminForm") AdminForm form) {
 		ModelAndView model = new ModelAndView("redirect:/admin");
 		logger.debug("save-Employee");
+		//@ TODO: Remove hardcoding
+		form.setCompanyAccountId(1);
 		commonService.saveEmployee(form);
 		return model;
 	}

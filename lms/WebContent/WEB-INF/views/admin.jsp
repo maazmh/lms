@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.1/css/buttons.bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.0/css/select.bootstrap.min.css">
+<link rel="stylesheet"	href="/lms/resources/css/bootstrap-select.min.css">
 
 	
 <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.3.js">
@@ -26,6 +27,7 @@
 </script>
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js">
 </script>
+<script	src="/lms/resources/js/bootstrap-select.js"></script>
 <title>Admin</title>
 <script type="text/javascript">
 
@@ -54,7 +56,7 @@ function init() {
    			{ data: "idEmployee" },
    			{ data: "firstName" },
    			{ data: "lastName" },
-            { data: "department" },
+            { data: "departmentName" },
             { data: "emailId" }
            ],
         select: true, 
@@ -73,7 +75,7 @@ function init() {
      			}, 
      			{
      				label: "Department:",
-     				name: "department"
+     				name: "departmentName"
      			}, 
      			{
      				label: "Email Id:",
@@ -86,68 +88,75 @@ function init() {
 	$('#employee tbody').on('click', 'tr', function () {
         //alert(table.row( this ).data().firstName);
         var clickedRow = table.row( this ).data();
-        $('#pEmployeeName').html(clickedRow.firstName + ' ' + clickedRow.lastName);
-        $('#pDepartment').html(clickedRow.department);
-        var approvers;
+        
+        // Populate the modal
+        $('#employeeId').val(clickedRow.idEmployee);
+        $('#firstName').val(clickedRow.firstName);
+        $('#lastName').val(clickedRow.lastName);
+        $('#emailId').val(clickedRow.emailId);
+        $('#department').val(clickedRow.departmentId);
+        
+        var arrApprovers=[];
         for(var i in clickedRow.approvers) {
-        	//alert(clickedRow.approvers[i].idApprovers + " " + clickedRow.approvers[i].approverName);
-        	if(approvers==null) {
-        		approvers = clickedRow.approvers[i].approverName;
-        	} else {
-        		approvers = approvers + ', ' + clickedRow.approvers[i].approverName;
-        	}
+        	arrApprovers.push(clickedRow.approvers[i].idApprovers);
         }
-        $('#pApprovers').html(approvers);
-        $('#pUsername').html(clickedRow.username);
-        $('#pIsAdmin').html(clickedRow.admin);
-        //$('#pEmployeeName').html(clickedRow.department);
-        //$('#pEmployeeName').html(clickedRow.department);
+        $('#approvers').selectpicker('val', arrApprovers);
+        $('#admin').val(clickedRow.admin);
+        
+        $('#saveOrEditModal').modal('show');
     } );
 	
 	$('#employee tbody').on('dblclick', 'tr', function () {
         alert(table.row( this ).data().firstName);
     } );
 	
-	
-	
-	/*
-	=====================================================================================
-								Approver Table
-	=====================================================================================
-	*/
-	var table = $('#tblApprover').DataTable( {
-	    autowidth: true,
-	    searching: false,
-	    ordering: false,
-	    sDom: 'rt',
-	    paging: false,
-	    "processing": true,
-        "serverSide": true,
-        "ajax": "${home}api/getAllEmployees/1",
-        columns: [
-   			{ data: "firstName" },
-   			{ data: "lastName" },
-   			{
-   		      "data": "fullName",
-   		      "render": firstName + " " + lastName
-   		    }
-           ],
-        select: true, 
-        fields: [ 
-     			{
-     				label: "First Name:",
-     				name: "firstName"
-     			},
-     			{
-     				label: "Last Name:",
-     				name: "lastName"
-     			}
-     		]
-	} );
 }
 
-function setupSaveOrEditModal() {
+function resetModalFieldsForNew() {
+	$('#employeeId').val(null);
+    $('#firstName').val(null);
+    $('#lastName').val(null);
+    $('#emailId').val(null);
+    $('#department').val(null);
+    $('#approvers').selectpicker('val', []);
+    $('#admin').val(0);
+}
+
+function saveChanges() {
+	if(validateForm()) {
+		$('#adminForm').submit();
+	}
+}
+
+function validateForm() {
+	var val = true;
+	var validationMessage = '<ul>';
+	if($('#firstName').val()=='') {
+		val = false;
+		validationMessage += '<li>First Name cannot be Empty</li>';
+	}
+	if($('#lastName').val()=='') {
+		val = false;
+		validationMessage += '<li>Last Name cannot be Empty</li>';
+	}
+	if($('#emailId').val()=='') {
+		val = false;
+		validationMessage += '<li>Email Id cannot be Empty</li>';
+	}
+	if($('#department').val()=='') {
+		val = false;
+		validationMessage += '<li>Select a department</li>';
+	}
+	if($('#approvers').val()=='') {
+		val = false;
+		validationMessage += '<li>Select atleast one approver</li>';
+	}
+	validationMessage += '</ul>';
 	
+	if(!val) {
+		$('#errorMsgModal').html(validationMessage);
+	}
+	return val;
 }
 </script>
 </head>
@@ -161,77 +170,19 @@ function setupSaveOrEditModal() {
 	    </div>
 		<p id="errorMsgP" class="bg-danger">${errorMessage}</p>
 		<p class="bg-success">${successMessage}</p>
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#saveOrEditModal" onclick="return setupSaveOrEditModal();">New</button>
-		<table width="100%">
-			<tbody>
-				<tr>
-					<td width="50%">
-						<table id="employee" class="table table-striped table-bordered" cellspacing="0" width="100%">
-							<thead>
-					            <tr>
-					            	<th>ID</th>
-					                <th>First Name</th>
-					                <th>Last Name</th>
-					                <th>Department</th>
-					                <th>Email ID</th>
-					            </tr>
-					        </thead>
-						</table>
-					</td>
-					<td width="50%" style="padding-top: 5em; padding-left: 3em;">
-						<table width="100%">
-							<tr>
-								<td width="50%">
-									<label>Employee Name</label>
-								</td>
-								<td width="50%">
-									<p class="form-control-static" id="pEmployeeName"></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="50%">
-									<label>Department</label>
-								</td>
-								<td width="50%">
-									<p class="form-control-static" id="pDepartment"></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="50%">
-									<label>Approvers</label>
-								</td>
-								<td width="50%">
-									<p class="form-control-static" id="pApprovers"></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="50%">
-									<label>Username</label>
-								</td>
-								<td width="50%">
-									<p class="form-control-static" id="pUsername"></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="50%">
-									<label>Admin</label>
-								</td>
-								<td width="50%">
-									<p class="form-control-static" id="pIsAdmin"></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="50%">
-									<label>Deleted</label>
-								</td>
-								<td width="50%">
-									<p class="form-control-static" id="pIsDeleted"></p>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</tbody>
+		<div class="btn-group" role="group" aria-label="employeeBtnGroup">
+			<button type="button" class="btn btn-primary" id='btnNew' data-toggle="modal" data-target="#saveOrEditModal" onclick="return resetModalFieldsForNew();">New</button>
+		</div>
+		<table id="employee" class="table table-striped table-bordered" cellspacing="0" width="100%">
+			<thead>
+	            <tr>
+	            	<th>ID</th>
+	                <th>First Name</th>
+	                <th>Last Name</th>
+	                <th>Department</th>
+	                <th>Email ID</th>
+	            </tr>
+	        </thead>
 		</table>
 	</div>
 	
@@ -241,10 +192,11 @@ function setupSaveOrEditModal() {
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title">Edit</h4>
+	        <h4 class="modal-title">Add New Employee</h4>
 	      </div>
 	      <div class="modal-body">
-	        <form:form method="post" action="saveEmployeeDetails" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
+	        <form:form method="post" action="save-employee" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
+	        	<p id="errorMsgModal" class="bg-danger">${errorMessage}</p>
 				<table width="100%" class="table">
 					<tr>
 						<td width="10%">
@@ -252,8 +204,9 @@ function setupSaveOrEditModal() {
 						</td>
 						<td width="20%">
 							<form:input path="firstName" cssClass="form-control"  placeholder="First Name" />
+							<form:hidden path="employeeId"/>
 						</td>
-						<td width="10%">
+						<td width="5%">
 						</td>
 						<td width="10%">
 							<label for="lastName">Last Name</label>
@@ -268,24 +221,17 @@ function setupSaveOrEditModal() {
 						</td>
 						<td width="20%">
 							<form:select path="department" cssClass="form-control">
+								<form:option value="" label="-- Select --"/>
 								<form:options items="${mapDepts}"/>
 							</form:select>
 						</td>
-					</tr>
-					<tr>
+						<td width="5%">
+						</td>
 						<td width="10%">
 							<label>Email Id</label>
 						</td>
 						<td width="20%">
 							<form:input path="emailId" cssClass="form-control"  placeholder="Email Id" />
-						</td>
-						<td width="10%">
-						</td>
-						<td width="10%">
-							<label>Username</label>
-						</td>
-						<td width="20%">
-							<p class="form-control-static" id="pUsername"></p>
 						</td>
 					</tr>
 					<tr>
@@ -293,16 +239,13 @@ function setupSaveOrEditModal() {
 							<label>Approvers</label>
 						</td>
 						<td width="20%">
-							<table id="tblApprover" class="table table-striped table-bordered" cellspacing="0" width="100%">
-							</table>
+<!-- 							<table id="tblApprover" class="table table-striped table-bordered" cellspacing="0" width="100%"> -->
+<!-- 							</table> -->
+							<form:select path="approvers" cssClass="selectpicker" multiple="true" data-live-search="true" data-max-options="3">
+								<form:options items="${mapApprovers}"/>
+							</form:select>
 						</td>
-						<td width="10%">
-						</td>
-						<td width="10%">
-							<label>Username</label>
-						</td>
-						<td width="20%">
-							<p class="form-control-static" id="pUsername"></p>
+						<td width="5%">
 						</td>
 					</tr>
 					<tr>
@@ -313,7 +256,7 @@ function setupSaveOrEditModal() {
 							<p><form:radiobutton path="admin" value="1" />&nbsp;&nbsp;&nbsp;Yes </p>
 							<p><form:radiobutton path="admin" value="0" />&nbsp;&nbsp;&nbsp;No </p>
 						</td>
-						<td width="10%">
+						<td width="5%">
 						</td>
 						<td width="10%">
 							<label>Deleted</label>

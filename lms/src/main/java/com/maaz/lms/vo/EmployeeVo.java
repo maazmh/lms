@@ -8,7 +8,8 @@ public class EmployeeVo {
 	private String lastName;
 	private String emailId;
 	private boolean isAdmin;
-	private String department;
+	private Integer departmentId;
+	private String departmentName;
 	private List<ApproverVo> approvers;
 	
 	public Integer getIdEmployee() {
@@ -41,17 +42,23 @@ public class EmployeeVo {
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
-	public String getDepartment() {
-		return department;
-	}
-	public void setDepartment(String department) {
-		this.department = department;
-	}
 	public List<ApproverVo> getApprovers() {
 		return approvers;
 	}
 	public void setApprovers(List<ApproverVo> approvers) {
 		this.approvers = approvers;
+	}
+	public Integer getDepartmentId() {
+		return departmentId;
+	}
+	public void setDepartmentId(Integer departmentId) {
+		this.departmentId = departmentId;
+	}
+	public String getDepartmentName() {
+		return departmentName;
+	}
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 	
 }

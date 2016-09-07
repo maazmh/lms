@@ -2,6 +2,7 @@ package com.maaz.lms.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,8 @@ public class CommonServiceImpl implements CommonService {
 				vo.setLastName(emp.getLastName());
 				vo.setEmailId(emp.getEmailId());
 				vo.setAdmin(emp.isAdmin());
-				vo.setDepartment(emp.getDepartment().getDeptName());
+				vo.setDepartmentId(emp.getDepartment().getIdDepartment());
+				vo.setDepartmentName(emp.getDepartment().getDeptName());
 				Set<Approvers> setApprovers = emp.getApprovers();
 				Iterator<Approvers> itr = setApprovers.iterator();
 				List<ApproverVo> lstApprovers = new ArrayList<ApproverVo>();
@@ -115,7 +117,33 @@ public class CommonServiceImpl implements CommonService {
 			emp.setEmailId(form.getEmailId());
 			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
 			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
+			
+			Set<Approvers> setApprovers = null;
+			if(form.getApprovers()!=null && form.getApprovers().size()>0) {
+				setApprovers = new HashSet<Approvers>();
+				for(Integer approverId : form.getApprovers()) {
+					Approvers approvers = new Approvers();
+					Employee approver = employeeDao.getEmployee(approverId);
+					approvers.setEmployee(emp);
+					approvers.setApprover(approver);
+					setApprovers.add(approvers);
+				}
+			}
+			emp.setApprovers(setApprovers);
 		}
+		employeeDao.saveOrUpdateEmployee(emp);
+	}
+
+	@Override
+	public Map<Integer, String> getEmployeesForDropDown(Integer companyAccountId) {
+		Map<Integer, String> mapEmployees = new HashMap<Integer, String>();
+		List<Employee> lstEmp = employeeDao.getAllEmployees(companyAccountId);
+		if(lstEmp!=null) {
+			for(Employee emp : lstEmp) {
+				mapEmployees.put(emp.getIdEmployee(), emp.getFirstName() + " " + emp.getLastName());
+			}
+		}
+		return mapEmployees;
 	}
 
 }

@@ -14,4 +14,6 @@ public interface CommonService {
 	public Map<Integer, String> getAllDepartmentsMap();
 
 	public void saveEmployee(AdminForm form);
+
+	public Map<Integer, String> getEmployeesForDropDown(Integer companyAccountId);
 }

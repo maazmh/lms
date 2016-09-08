@@ -22,6 +22,7 @@ import com.maaz.lms.dao.EmployeeDao;
 import com.maaz.lms.dao.LeavesDao;
 import com.maaz.lms.entity.Approvers;
 import com.maaz.lms.entity.Employee;
+import com.maaz.lms.entity.EmployeeFiscalYearLeaves;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
 import com.maaz.lms.entity.Leaves;
@@ -121,12 +122,20 @@ public class LeavesServiceImpl implements LeavesService {
 				Employee emp = lstLeaves.get(0).getEmployee();
 				form.setEmployeeId(emp.getIdEmployee());
 				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
-				form.setLeavesAllocated(emp.getAllocatedLeaves());
-				form.setCarriedForwardLeaves(emp.getCarriedForwardLeaves());
+				Set<EmployeeFiscalYearLeaves> setEmpFiscalYrLeaves = emp.getEmpFiscalYrLeaves();
+				Iterator<EmployeeFiscalYearLeaves> itr = setEmpFiscalYrLeaves.iterator();
+				while(itr.hasNext()) {
+					EmployeeFiscalYearLeaves employeeFiscalYearLeaves = itr.next();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(employeeFiscalYearLeaves.getFiscalYear().getDtTo());
+					if(cal.get(Calendar.YEAR)==year) {
+						form.setLeavesAllocated(employeeFiscalYearLeaves.getLeavesAllocated());
+						form.setCarriedForwardLeaves(employeeFiscalYearLeaves.getLeavesCarriedForward());
+					}
+				}
 				
-				Integer leavesAllocated = emp.getAllocatedLeaves();
 				Integer leavesUsed = 0;
-				Integer leavesRemaining = emp.getAllocatedLeaves();
+				Integer leavesRemaining = form.getLeavesAllocated();
 				Integer sickLeavesUsed = 0;
 				Integer unpaidLeavesUsed = 0;
 				Integer leavesPendingApproval = 0;
@@ -171,7 +180,6 @@ public class LeavesServiceImpl implements LeavesService {
 					}
 				}
 				
-				form.setLeavesAllocated(leavesAllocated);
 				form.setLeavesUsed(leavesUsed);
 				form.setLeavesRemaining(leavesRemaining);
 				form.setLeavesPendingApproval(leavesPendingApproval);
@@ -182,10 +190,18 @@ public class LeavesServiceImpl implements LeavesService {
 				Employee emp = employeeDao.getEmployee(employeeId);
 				form.setEmployeeId(emp.getIdEmployee());
 				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
-				form.setLeavesAllocated(emp.getAllocatedLeaves());
-				form.setCarriedForwardLeaves(emp.getCarriedForwardLeaves());
+				Set<EmployeeFiscalYearLeaves> setEmpFiscalYrLeaves = emp.getEmpFiscalYrLeaves();
+				Iterator<EmployeeFiscalYearLeaves> itr = setEmpFiscalYrLeaves.iterator();
+				while(itr.hasNext()) {
+					EmployeeFiscalYearLeaves employeeFiscalYearLeaves = itr.next();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(employeeFiscalYearLeaves.getFiscalYear().getDtTo());
+					if(cal.get(Calendar.YEAR)==year) {
+						form.setLeavesAllocated(employeeFiscalYearLeaves.getLeavesAllocated());
+						form.setCarriedForwardLeaves(employeeFiscalYearLeaves.getLeavesCarriedForward());
+					}
+				}
 				
-				form.setLeavesAllocated(null);
 				form.setLeavesUsed(null);
 				form.setLeavesRemaining(null);
 				form.setLeavesPendingApproval(null);

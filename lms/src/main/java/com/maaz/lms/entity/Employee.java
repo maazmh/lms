@@ -31,12 +31,13 @@ public class Employee implements Serializable {
 	private String firstName;
 	private String lastName;
 	private String emailId;
-	private Integer allocatedLeaves;
-	private Integer carriedForwardLeaves;
+//	private Integer allocatedLeaves;
+//	private Integer carriedForwardLeaves;
 	private boolean isAdmin;
 	private boolean isDeleted;
 	private Date lastLogin;
 	private CompanyAccount company;
+	private Set<EmployeeFiscalYearLeaves> empFiscalYrLeaves = new HashSet<EmployeeFiscalYearLeaves>();
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
 	private Set<Leaves> leaves = new HashSet<Leaves>();
@@ -93,13 +94,13 @@ public class Employee implements Serializable {
 		this.emailId = emailId;
 	}
 	
-	@Column(name = "allocatedLeaves")
-	public Integer getAllocatedLeaves() {
-		return allocatedLeaves;
-	}
-	public void setAllocatedLeaves(Integer allocatedLeaves) {
-		this.allocatedLeaves = allocatedLeaves;
-	}
+//	@Column(name = "allocatedLeaves")
+//	public Integer getAllocatedLeaves() {
+//		return allocatedLeaves;
+//	}
+//	public void setAllocatedLeaves(Integer allocatedLeaves) {
+//		this.allocatedLeaves = allocatedLeaves;
+//	}
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
 	@OrderBy
@@ -128,13 +129,13 @@ public class Employee implements Serializable {
 		this.leaves = leaves;
 	}
 	
-	@Column(name = "carriedForwardLeaves")
-	public Integer getCarriedForwardLeaves() {
-		return carriedForwardLeaves;
-	}
-	public void setCarriedForwardLeaves(Integer carriedForwardLeaves) {
-		this.carriedForwardLeaves = carriedForwardLeaves;
-	}
+//	@Column(name = "carriedForwardLeaves")
+//	public Integer getCarriedForwardLeaves() {
+//		return carriedForwardLeaves;
+//	}
+//	public void setCarriedForwardLeaves(Integer carriedForwardLeaves) {
+//		this.carriedForwardLeaves = carriedForwardLeaves;
+//	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "lastLogin")
@@ -152,5 +153,14 @@ public class Employee implements Serializable {
 	}
 	public void setCompany(CompanyAccount company) {
 		this.company = company;
+	}
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
+	@OrderBy
+	public Set<EmployeeFiscalYearLeaves> getEmpFiscalYrLeaves() {
+		return empFiscalYrLeaves;
+	}
+	public void setEmpFiscalYrLeaves(Set<EmployeeFiscalYearLeaves> empFiscalYrLeaves) {
+		this.empFiscalYrLeaves = empFiscalYrLeaves;
 	}
 }

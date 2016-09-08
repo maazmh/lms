@@ -40,7 +40,7 @@
  		<mapping class="com.maaz.lms.entity.Department"/>
  		<mapping class="com.maaz.lms.entity.CompanyAccount"/>
  		<mapping class="com.maaz.lms.entity.FiscalYear"/>
- 		
+ 		<mapping class="com.maaz.lms.entity.EmployeeFiscalYearLeaves"/>
  		 
     </session-factory>
 </hibernate-configuration>

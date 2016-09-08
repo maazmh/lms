@@ -17,6 +17,8 @@ public class AdminForm implements Serializable {
 	private String emailId;
 	private Integer deleted;
 	private Integer admin;
+	private Integer leavesAllocated;
+	private Integer leavesCarriedForward;
 	private List<Integer> approvers;
 	
 	public String getFirstName() {
@@ -72,5 +74,17 @@ public class AdminForm implements Serializable {
 	}
 	public void setCompanyAccountId(Integer companyAccountId) {
 		this.companyAccountId = companyAccountId;
+	}
+	public Integer getLeavesAllocated() {
+		return leavesAllocated;
+	}
+	public void setLeavesAllocated(Integer leavesAllocated) {
+		this.leavesAllocated = leavesAllocated;
+	}
+	public Integer getLeavesCarriedForward() {
+		return leavesCarriedForward;
+	}
+	public void setLeavesCarriedForward(Integer leavesCarriedForward) {
+		this.leavesCarriedForward = leavesCarriedForward;
 	}
 }

@@ -3,6 +3,7 @@ package com.maaz.lms.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.maaz.lms.entity.FiscalYear;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
 import com.maaz.lms.entity.Leaves;
@@ -23,4 +24,6 @@ public interface LeavesDao {
 	public Leaves getLeaveById(Integer leaveId);
 	
 	public List<Leaves> getLeaves(Integer employeeId, Date dtFrom, Date dtTo);
+
+	public List<FiscalYear> getAllFiscalYears();
 }

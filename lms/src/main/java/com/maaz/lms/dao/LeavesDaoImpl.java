@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.maaz.lms.entity.Approvers;
+import com.maaz.lms.entity.FiscalYear;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
 import com.maaz.lms.entity.Leaves;
@@ -140,6 +141,19 @@ public class LeavesDaoImpl implements LeavesDao {
 			session.close();
 		}
 		return null;
+	}
+
+	@Override
+	public List<FiscalYear> getAllFiscalYears() {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from FiscalYear");
+			List<FiscalYear> list = query.list();
+			return list;
+		} catch(Exception e) {
+			logger.error("getAllFiscalYears Exception",e);
+			return null;
+		}
 	}
 	
 	

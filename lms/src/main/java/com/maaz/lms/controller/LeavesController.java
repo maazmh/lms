@@ -73,6 +73,7 @@ public class LeavesController {
 			
 			//@ TODO: Remove these hardcoding below
 			leavesForm.setEmployeeId(1);
+			leavesForm.setYear(2016);
 			empId = 1;
 			
 			lService.saveLeave(leavesForm);

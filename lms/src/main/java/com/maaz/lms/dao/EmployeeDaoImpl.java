@@ -75,4 +75,16 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		
 	}
 
+
+	@Override
+	public Department getDepartment(Integer departmentId) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			return (Department) session.get(Department.class, departmentId);
+		} catch(Exception e) {
+			logger.error("DAO Exception getDepartment",e);
+		}
+		return null;
+	}
+
 }

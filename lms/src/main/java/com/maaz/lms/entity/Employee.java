@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -102,7 +103,9 @@ public class Employee implements Serializable {
 //		this.allocatedLeaves = allocatedLeaves;
 //	}
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
+	@OneToMany(fetch = FetchType.EAGER, 
+			cascade={CascadeType.ALL},
+			mappedBy = "employee")
 	@OrderBy
 	public Set<Approvers> getApprovers() {
 		return approvers;
@@ -120,7 +123,9 @@ public class Employee implements Serializable {
 		this.department = department;
 	}
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
+	@OneToMany(fetch = FetchType.EAGER, 
+			cascade={CascadeType.ALL},
+			mappedBy = "employee")
 	@OrderBy
 	public Set<Leaves> getLeaves() {
 		return leaves;
@@ -155,7 +160,9 @@ public class Employee implements Serializable {
 		this.company = company;
 	}
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "employee")
+	@OneToMany(fetch = FetchType.EAGER, 
+			cascade={CascadeType.ALL},
+			mappedBy = "employee")
 	@OrderBy
 	public Set<EmployeeFiscalYearLeaves> getEmpFiscalYrLeaves() {
 		return empFiscalYrLeaves;

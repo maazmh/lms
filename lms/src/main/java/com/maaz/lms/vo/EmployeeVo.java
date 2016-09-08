@@ -10,6 +10,8 @@ public class EmployeeVo {
 	private boolean isAdmin;
 	private Integer departmentId;
 	private String departmentName;
+	private Integer leavesAllocated;
+	private Integer leavesCarriedForward;
 	private List<ApproverVo> approvers;
 	
 	public Integer getIdEmployee() {
@@ -59,6 +61,18 @@ public class EmployeeVo {
 	}
 	public void setDepartmentName(String departmentName) {
 		this.departmentName = departmentName;
+	}
+	public Integer getLeavesAllocated() {
+		return leavesAllocated;
+	}
+	public void setLeavesAllocated(Integer leavesAllocated) {
+		this.leavesAllocated = leavesAllocated;
+	}
+	public Integer getLeavesCarriedForward() {
+		return leavesCarriedForward;
+	}
+	public void setLeavesCarriedForward(Integer leavesCarriedForward) {
+		this.leavesCarriedForward = leavesCarriedForward;
 	}
 	
 }

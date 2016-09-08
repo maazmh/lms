@@ -57,36 +57,34 @@ function init() {
    			{ data: "firstName" },
    			{ data: "lastName" },
             { data: "departmentName" },
-            { data: "emailId" }
+            { data: "emailId" },
+            //{ data: "departmentId" }
+//             { data: "idEmployee", render: function ( data, type, full, meta ) {
+// 	                //var btnRendererStr = "<button class='btn btn-primary btn-sm' onClick='editEmp();'>Edit</button> &nbsp;&nbsp;&nbsp;";
+// 	                //btnRendererStr += "<button class='btn btn-primary btn-sm'>Delete</button>"; 
+// 	            	alert(data);
+// 	                var btnRendererStr = "<a href='#' onclick='deleteEmpConfirmationModal("+data+");'><span class='glyphicon glyphicon-remove'></span></a>&nbsp;&nbsp;&nbsp;";
+// 	                return btnRendererStr;
+//             	}
+//             }
            ],
-        select: true, 
-        fields: [ 
-     		    {
-     				label: "Id:",
-     				name: "idEmployee"
-     			},
-     			{
-     				label: "First Name:",
-     				name: "firstName"
-     			},
-     			{
-     				label: "Last Name:",
-     				name: "lastName"
-     			}, 
-     			{
-     				label: "Department:",
-     				name: "departmentName"
-     			}, 
-     			{
-     				label: "Email Id:",
-     				name: "emailId"
-     			}
-     		]
+//         "columnDefs": [ {
+//             "targets": -1,
+//             "data": "emailId",
+//             "defaultContent": "<button>Click!</button>"
+//         } ],
+        select: true
 	} );
 	
+	$('#employee tbody').on( 'click', 'button', function () {
+        var data = table.row( $(this).parents('tr') ).data();
+        alert( data.idEmployee +"'s salary is: "+ data.lastName );
+    } );
 	
-	$('#employee tbody').on('click', 'tr', function () {
+	
+	$('#employee tbody').on('click', 'td', function () {
         //alert(table.row( this ).data().firstName);
+        //alert(table.column( this ).index());
         var clickedRow = table.row( this ).data();
         
         // Populate the modal
@@ -95,6 +93,8 @@ function init() {
         $('#lastName').val(clickedRow.lastName);
         $('#emailId').val(clickedRow.emailId);
         $('#department').val(clickedRow.departmentId);
+        $('#leavesAllocated').val(clickedRow.leavesAllocated);
+        $('#leavesCarriedForward').val(clickedRow.leavesCarriedForward);
         
         var arrApprovers=[];
         for(var i in clickedRow.approvers) {
@@ -102,6 +102,7 @@ function init() {
         }
         $('#approvers').selectpicker('val', arrApprovers);
         $('#admin').val(clickedRow.admin);
+        
         
         $('#saveOrEditModal').modal('show');
     } );
@@ -119,6 +120,8 @@ function resetModalFieldsForNew() {
     $('#emailId').val(null);
     $('#department').val(null);
     $('#approvers').selectpicker('val', []);
+    $('#leavesAllocated').val(null);
+    $('#leavesCarriedForward').val(null);
     $('#admin').val(0);
 }
 
@@ -151,12 +154,27 @@ function validateForm() {
 		val = false;
 		validationMessage += '<li>Select atleast one approver</li>';
 	}
+	if($('#leavesAllocated').val()=='') {
+		val = false;
+		validationMessage += '<li>Leaves allocated cannot be null or empty</li>';
+	}
+	if($('#leavesCarriedForward').val()=='') {
+		val = false;
+		validationMessage += '<li>Leaves Carried Forward cannot be null. Enter 0 if no leaves carried forward.</li>';
+	}
 	validationMessage += '</ul>';
 	
 	if(!val) {
 		$('#errorMsgModal').html(validationMessage);
 	}
 	return val;
+}
+
+function deleteEmpConfirmationModal(empId) {
+	//$('#spanEmpNameToDelete').html(
+}
+function deleteEmp() {
+	
 }
 </script>
 </head>
@@ -236,6 +254,22 @@ function validateForm() {
 					</tr>
 					<tr>
 						<td width="10%">
+							<label for="leavesAllocated">Leaves Allocated (Current Year)</label>
+						</td>
+						<td width="20%">
+							<form:input path="leavesAllocated" cssClass="form-control"  placeholder="Leaves Allocated (Current Year)" />
+						</td>
+						<td width="5%">
+						</td>
+						<td width="10%">
+							<label for="lastName">Leaves Carried Forward</label>
+						</td>
+						<td width="10%">
+							<form:input path="leavesCarriedForward" cssClass="form-control"  placeholder="Leaves Carried Forward" />
+						</td>
+					</tr>
+					<tr>
+						<td width="10%">
 							<label>Approvers</label>
 						</td>
 						<td width="20%">
@@ -272,6 +306,27 @@ function validateForm() {
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        <button type="button" class="btn btn-primary" onclick="saveChanges();">Save changes</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" style='width: 80%;' role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">Delete Confirmation</h4>
+	      </div>
+	      <div class="modal-body">
+	      	  Are you sure you want to delete <span id='spanEmpNameToDelete'></span>?
+	      	  <form:form method="post" action="delete-employee" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
+	      	  	<input type="hidden" id="employeeIdToDelete" />
+	      	  </form:form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary" onclick="deleteEmp();">Delete</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

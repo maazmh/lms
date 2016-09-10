@@ -13,12 +13,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "Employee")
@@ -104,9 +108,12 @@ public class Employee implements Serializable {
 //	}
 	
 	@OneToMany(fetch = FetchType.EAGER, 
-			cascade={CascadeType.ALL},
+			cascade=CascadeType.ALL,
+			orphanRemoval = true,
 			mappedBy = "employee")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OrderBy
+	//@JoinTable(name = "Approvers", joinColumns = { @JoinColumn(name = "idEmployee") }, inverseJoinColumns = { @JoinColumn(name = "idApprover") })
 	public Set<Approvers> getApprovers() {
 		return approvers;
 	}
@@ -114,7 +121,7 @@ public class Employee implements Serializable {
 		this.approvers = approvers;
 	}
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="departmentId")
 	public Department getDepartment() {
 		return department;
@@ -124,7 +131,7 @@ public class Employee implements Serializable {
 	}
 	
 	@OneToMany(fetch = FetchType.EAGER, 
-			cascade={CascadeType.ALL},
+			cascade=CascadeType.ALL,
 			mappedBy = "employee")
 	@OrderBy
 	public Set<Leaves> getLeaves() {
@@ -151,7 +158,7 @@ public class Employee implements Serializable {
 		this.lastLogin = lastLogin;
 	}
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="idCompanyAccount")
 	public CompanyAccount getCompany() {
 		return company;
@@ -161,8 +168,10 @@ public class Employee implements Serializable {
 	}
 	
 	@OneToMany(fetch = FetchType.EAGER, 
-			cascade={CascadeType.ALL},
+			cascade=CascadeType.ALL,
+			orphanRemoval = true,
 			mappedBy = "employee")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OrderBy
 	public Set<EmployeeFiscalYearLeaves> getEmpFiscalYrLeaves() {
 		return empFiscalYrLeaves;

@@ -16,6 +16,7 @@ import com.maaz.lms.dao.EmployeeDao;
 import com.maaz.lms.dao.LeavesDao;
 import com.maaz.lms.dao.LoginDao;
 import com.maaz.lms.entity.Approvers;
+import com.maaz.lms.entity.CompanyAccount;
 import com.maaz.lms.entity.Department;
 import com.maaz.lms.entity.Employee;
 import com.maaz.lms.entity.EmployeeFiscalYearLeaves;
@@ -52,13 +53,14 @@ public class CommonServiceImpl implements CommonService {
 				vo.setAdmin(emp.isAdmin());
 				vo.setDepartmentId(emp.getDepartment().getIdDepartment());
 				vo.setDepartmentName(emp.getDepartment().getDeptName());
+				vo.setDeleted(emp.isDeleted());
 				Set<Approvers> setApprovers = emp.getApprovers();
 				Iterator<Approvers> itr = setApprovers.iterator();
 				List<ApproverVo> lstApprovers = new ArrayList<ApproverVo>();
 				while(itr.hasNext()) {
 					Approvers approver = itr.next();
 					ApproverVo apprVo = new ApproverVo();
-					apprVo.setIdApprovers(approver.getIdApprovers());
+					apprVo.setIdApprovers(approver.getApprover().getIdEmployee());
 					apprVo.setApproverName(approver.getApprover().getFirstName() + " " + approver.getApprover().getLastName());
 					lstApprovers.add(apprVo);
 				}
@@ -119,18 +121,55 @@ public class CommonServiceImpl implements CommonService {
 	public void saveEmployee(AdminForm form) {
 		Employee emp = null;
 		if(form.getEmployeeId()!=null) {
-			//update
+			/**
+			 * Update
+			 * */
 			emp = employeeDao.getEmployee(form.getEmployeeId());
 			emp.setIdEmployee(form.getEmployeeId());
 			emp.setFirstName(form.getFirstName());
 			emp.setLastName(form.getLastName());
 			emp.setEmailId(form.getEmailId());
+			Department dept = employeeDao.getDepartment(form.getDepartment());
+			emp.setDepartment(dept);
 			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
 			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
 			
+			emp.getApprovers().clear();
+			if(form.getApprovers()!=null && form.getApprovers().size()>0) {
+				for(Integer approverId : form.getApprovers()) {
+					Approvers approvers = new Approvers();
+					Employee approver = employeeDao.getEmployee(approverId);
+					approvers.setEmployee(emp);
+					approvers.setApprover(approver);
+					emp.getApprovers().add(approvers);
+				}
+			}
+			
+			Calendar now = Calendar.getInstance();
+			EmployeeFiscalYearLeaves empFisc = new EmployeeFiscalYearLeaves();
+			empFisc.setEmployee(emp);
+			empFisc.setLeavesAllocated(form.getLeavesAllocated());
+			empFisc.setLeavesCarriedForward(form.getLeavesCarriedForward());
+			int yearNow = now.get(Calendar.YEAR);
+			List<FiscalYear> lstFiscalYrs = leavesDao.getAllFiscalYears();
+			for(FiscalYear fy : lstFiscalYrs) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(fy.getDtTo());
+				if(yearNow==cal.get(Calendar.YEAR)) {
+					empFisc.setFiscalYear(fy);
+				}
+			}
+			emp.getEmpFiscalYrLeaves().clear();
+			emp.getEmpFiscalYrLeaves().add(empFisc);
+			employeeDao.updateEmployee(emp);
+			
 		} else {
-			//new
+			/**
+			 * New
+			 * */
 			emp = new Employee();
+			CompanyAccount company = employeeDao.getCompany(form.getCompanyAccountId());
+			emp.setCompany(company);
 			emp.setIdEmployee(form.getEmployeeId());
 			emp.setFirstName(form.getFirstName());
 			emp.setLastName(form.getLastName());
@@ -170,8 +209,9 @@ public class CommonServiceImpl implements CommonService {
 			Set<EmployeeFiscalYearLeaves> setEmpFisc = new HashSet<EmployeeFiscalYearLeaves>();
 			setEmpFisc.add(empFisc);
 			emp.setEmpFiscalYrLeaves(setEmpFisc);
+			
+			employeeDao.saveEmployee(emp);
 		}
-		employeeDao.saveOrUpdateEmployee(emp);
 	}
 
 	@Override

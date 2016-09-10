@@ -8,6 +8,7 @@ public class EmployeeVo {
 	private String lastName;
 	private String emailId;
 	private boolean isAdmin;
+	private boolean isDeleted;
 	private Integer departmentId;
 	private String departmentName;
 	private Integer leavesAllocated;
@@ -73,6 +74,12 @@ public class EmployeeVo {
 	}
 	public void setLeavesCarriedForward(Integer leavesCarriedForward) {
 		this.leavesCarriedForward = leavesCarriedForward;
+	}
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 	
 }

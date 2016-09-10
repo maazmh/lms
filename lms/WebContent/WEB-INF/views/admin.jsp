@@ -44,13 +44,17 @@ function init() {
 	=====================================================================================
 	*/
 	var table = $('#employee').DataTable( {
-	    paging: true,
+	    paging: false,
         "pagingType": "simple",
 	    autowidth: true,
 	    ordering: false,
 	    searching:true,
+	    "search": {
+	       "smart": true
+	    },
+	    pagelength:20,
 	    "processing": true,
-        "serverSide": true,
+        //"serverSide": true,
         "ajax": "${home}api/getAllEmployees/1",
         columns: [
    			{ data: "idEmployee" },
@@ -76,10 +80,10 @@ function init() {
         select: true
 	} );
 	
-	$('#employee tbody').on( 'click', 'button', function () {
-        var data = table.row( $(this).parents('tr') ).data();
-        alert( data.idEmployee +"'s salary is: "+ data.lastName );
-    } );
+// 	$('#employee tbody').on( 'click', 'button', function () {
+//         var data = table.row( $(this).parents('tr') ).data();
+//         alert( data.idEmployee +"'s salary is: "+ data.lastName );
+//     } );
 	
 	
 	$('#employee tbody').on('click', 'td', function () {
@@ -101,7 +105,17 @@ function init() {
         	arrApprovers.push(clickedRow.approvers[i].idApprovers);
         }
         $('#approvers').selectpicker('val', arrApprovers);
-        $('#admin').val(clickedRow.admin);
+        if(clickedRow.admin==true) {
+        	$("#radioAdmin1").prop("checked", true);
+        } else {
+        	$("#radioAdmin0").prop("checked", true)
+        }
+        
+        if(clickedRow.deleted==true) {
+        	$("#radioDeleted1").prop("checked", true);
+        } else {
+        	$("#radioDeleted0").prop("checked", true)
+        }
         
         
         $('#saveOrEditModal').modal('show');
@@ -287,8 +301,8 @@ function deleteEmp() {
 							<label>Admin</label>
 						</td>
 						<td width="20%">
-							<p><form:radiobutton path="admin" value="1" />&nbsp;&nbsp;&nbsp;Yes </p>
-							<p><form:radiobutton path="admin" value="0" />&nbsp;&nbsp;&nbsp;No </p>
+							<p><form:radiobutton id='radioAdmin1' path="admin" value="1" />&nbsp;&nbsp;&nbsp;Yes </p>
+							<p><form:radiobutton id='radioAdmin0' path="admin" value="0" />&nbsp;&nbsp;&nbsp;No </p>
 						</td>
 						<td width="5%">
 						</td>
@@ -296,8 +310,8 @@ function deleteEmp() {
 							<label>Deleted</label>
 						</td>
 						<td width="20%">
-							<p><form:radiobutton path="deleted" value="1" />&nbsp;&nbsp;&nbsp;Yes </p>
-							<p><form:radiobutton path="deleted" value="0" />&nbsp;&nbsp;&nbsp;No </p>
+							<p><form:radiobutton id='radioDeleted1' path="deleted" value="1" />&nbsp;&nbsp;&nbsp;Yes </p>
+							<p><form:radiobutton id='radioDeleted0' path="deleted" value="0" />&nbsp;&nbsp;&nbsp;No </p>
 						</td>
 					</tr>
 				</table>

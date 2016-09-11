@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.maaz.lms.entity.Employee;
 import com.maaz.lms.form.LoginForm;
 import com.maaz.lms.service.CommonService;
 import com.maaz.lms.service.LoginService;
+import com.maaz.lms.util.Constants;
 import com.maaz.lms.vo.EmployeeVo;
 
 @Controller
@@ -37,6 +39,8 @@ public class LoginController {
 	public ModelAndView showLoginPage(HttpSession session, 
 			@ModelAttribute("loginForm") LoginForm loginForm) {
 		ModelAndView model = new ModelAndView("login");
+		session.setAttribute(Constants.SESSION_STR_EMP_ID, null);
+		session.setAttribute(Constants.SESSION_STR_COMP_ACT_ID, null);
 		return model;
 	}
 	
@@ -45,10 +49,11 @@ public class LoginController {
 			@ModelAttribute("loginForm") LoginForm loginForm) {
 		ModelAndView model = new ModelAndView("login");
 		try {
-			Integer empId = loginService.login(loginForm.getUsername(), loginForm.getPassword());
-			if(empId!=null) {
-				logger.info("empId: {}", empId);
-				session.setAttribute("employeeId", empId);
+			Employee emp = loginService.login(loginForm.getUsername(), loginForm.getPassword());
+			if(emp!=null) {
+				logger.info("empId: {}", emp.getIdEmployee());
+				session.setAttribute(Constants.SESSION_STR_EMP_ID, emp.getIdEmployee());
+				session.setAttribute(Constants.SESSION_STR_COMP_ACT_ID, emp.getCompany().getIdCompanyAccount());
 				model.setViewName("redirect:/calendar");
 			} else {
 				model.addObject("loginFailedMessage", loginFailedMessage);
@@ -65,10 +70,10 @@ public class LoginController {
 			@ModelAttribute("loginForm") LoginForm loginForm) {
 		ModelAndView model = new ModelAndView("account");
 		
-		Integer empId = (Integer) session.getAttribute("employeeId");
+		Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 		logger.info("Employee Id: {}", empId);
 		
-		Integer companyId = (Integer) session.getAttribute("companyAccountId");
+		Integer companyId = (Integer) session.getAttribute(Constants.SESSION_STR_COMP_ACT_ID);
 		logger.info("company Id: {}", companyId);
 		
 		//@ TODO: remove hardcoding for company account
@@ -89,10 +94,10 @@ public class LoginController {
 		loginForm.setUsername(null);
 		loginForm.setPassword(null);
 		
-		Integer empId = (Integer) session.getAttribute("employeeId");
+		Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 		logger.info("Employee Id: {}", empId);
 		
-		Integer companyId = (Integer) session.getAttribute("companyAccountId");
+		Integer companyId = (Integer) session.getAttribute(Constants.SESSION_STR_COMP_ACT_ID);
 		logger.info("company Id: {}", companyId);
 		
 		//@ TODO: remove hardcoding for company account
@@ -102,6 +107,15 @@ public class LoginController {
 		loginForm.setUsername(vo.getEmailId());
 		
 		model.addObject("successMessage", "Password Changed Successfully");
+		return model;
+	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public ModelAndView logout(HttpSession session, 
+			@ModelAttribute("loginForm") LoginForm loginForm) {
+		ModelAndView model = new ModelAndView("login");
+		session.setAttribute(Constants.SESSION_STR_EMP_ID, null);
+		session.setAttribute(Constants.SESSION_STR_COMP_ACT_ID, null);
 		return model;
 	}
 }

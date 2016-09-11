@@ -21,7 +21,7 @@ public class LoginDaoImpl implements LoginDao {
 
 	
 	@Override
-	public Integer login(String username, String password) {
+	public Employee login(String username, String password) {
 		try {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Query query = session.createQuery("from Employee where emailId = :username  and password = :password");
@@ -29,7 +29,7 @@ public class LoginDaoImpl implements LoginDao {
 			query.setParameter("password", password);
 			List<Employee> list = query.list();
 			logger.info("list size: {}", list!=null ? list.size() : null);
-			return list!=null ? list.get(0).getIdEmployee() : null;
+			return list!=null ? list.get(0) : null;
 		} catch(Exception e) {
 			logger.error("Login Exception",e);
 			return null;

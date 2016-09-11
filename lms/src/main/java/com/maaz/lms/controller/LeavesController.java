@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.maaz.lms.form.ApprovalForm;
 import com.maaz.lms.form.LeavesForm;
 import com.maaz.lms.service.LeavesService;
+import com.maaz.lms.util.Constants;
 import com.maaz.lms.vo.LeavesVo;
 
 @Controller
@@ -42,7 +43,7 @@ public class LeavesController {
 			@ModelAttribute("leavesForm") LeavesForm leavesForm) {
 		ModelAndView model = new ModelAndView("calendar");
 		try {
-			Integer empId = (Integer) session.getAttribute("employeeId");
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
 			
 			//@ TODO: Remove these hardcoding below
@@ -68,7 +69,7 @@ public class LeavesController {
 	public ModelAndView saveLeave(HttpSession session, @ModelAttribute("leavesForm") LeavesForm leavesForm) {
 		ModelAndView model = new ModelAndView("calendar");
 		try {
-			Integer empId = (Integer) session.getAttribute("employeeId");
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
 			
 			//@ TODO: Remove these hardcoding below
@@ -97,7 +98,7 @@ public class LeavesController {
 	public ModelAndView showApprovalScreen(HttpSession session, @ModelAttribute("approvalForm") ApprovalForm approvalForm) {
 		ModelAndView model = new ModelAndView("approval");
 		try {
-			Integer empId = (Integer) session.getAttribute("employeeId");
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
 			
 			//@ TODO: Remove Hardcoding
@@ -121,7 +122,7 @@ public class LeavesController {
 			@ModelAttribute("approvalForm") ApprovalForm approvalForm) {
 		ModelAndView model = new ModelAndView("redirect:/approval");
 		try {
-			Integer empId = (Integer) session.getAttribute("employeeId");
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
 			
 			//@ TODO: Remove Hardcoding
@@ -143,7 +144,7 @@ public class LeavesController {
 			@ModelAttribute("approvalForm") ApprovalForm approvalForm) {
 		ModelAndView model = new ModelAndView("redirect:/approval");
 		try {
-			Integer empId = (Integer) session.getAttribute("employeeId");
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
 			
 			//@ TODO: Remove Hardcoding

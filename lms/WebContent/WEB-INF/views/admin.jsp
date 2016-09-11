@@ -35,6 +35,7 @@ function setupNavBar() {
 	$('#navBarLiApproval').removeClass('active');
 	$('#navBarLiCalendar').removeClass('active');
 	$('#navBarLiAdmin').addClass('active');
+	$('#navBarLiAccount').removeClass('active');
 }
 
 function init() { 

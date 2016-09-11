@@ -24,4 +24,6 @@ public interface EmployeeDao {
 	public Department getDepartment(Integer departmentId);
 
 	public CompanyAccount getCompany(Integer companyAccountId);
+
+	public Employee getEmployee(Integer companyId, Integer empId);
 }

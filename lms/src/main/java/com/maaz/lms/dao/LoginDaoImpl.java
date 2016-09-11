@@ -24,7 +24,7 @@ public class LoginDaoImpl implements LoginDao {
 	public Integer login(String username, String password) {
 		try {
 			Session session = HibernateUtil.getSessionFactory().openSession();
-			Query query = session.createQuery("from Employee where username = :username  and password = :password");
+			Query query = session.createQuery("from Employee where emailId = :username  and password = :password");
 			query.setParameter("username", username);
 			query.setParameter("password", password);
 			List<Employee> list = query.list();
@@ -33,6 +33,26 @@ public class LoginDaoImpl implements LoginDao {
 		} catch(Exception e) {
 			logger.error("Login Exception",e);
 			return null;
+		}
+	}
+
+
+	@Override
+	public void changePassword(String username, String password) {
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("update Employee set password = :password" +
+    				" where emailId = :emailId");
+			query.setParameter("password", password);
+			query.setParameter("emailId", username);
+			int result = query.executeUpdate();
+		} catch(Exception e) {
+			logger.error("DAO Exception changePassword",e);
+			e.printStackTrace();
+		} finally {
+			session.flush();
+			session.close();
 		}
 	}
 }

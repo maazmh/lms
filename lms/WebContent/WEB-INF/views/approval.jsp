@@ -53,6 +53,7 @@ function setupNavBar() {
 	$('#navBarLiApproval').addClass('active');
 	$('#navBarLiCalendar').removeClass('active');
 	$('#navBarLiAdmin').removeClass('active');
+	$('#navBarLiAccount').removeClass('active');
 }
 </script>
 </head>

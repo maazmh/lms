@@ -46,6 +46,26 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		}
 		return null;
 	}
+	
+	@Override
+	public Employee getEmployee(Integer companyId, Integer employeeId) {
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from Employee where company.idCompanyAccount = :idCompanyAccount and idEmployee = :idEmployee");
+			query.setParameter("idCompanyAccount", companyId);
+			query.setParameter("idEmployee", employeeId);
+			List<Employee> lstEmp = query.list();
+			if(lstEmp!=null && lstEmp.size()>0) {
+				return lstEmp.get(0);
+			}
+		} catch(Exception e) {
+			logger.error("DAO Exception getEmployee",e);
+		} finally {
+			session.close();
+		}
+		return null;
+	}
 
 
 	@Override
@@ -107,7 +127,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			session.flush();
 			session.close();
 		}
-		
 	}
 	
 	

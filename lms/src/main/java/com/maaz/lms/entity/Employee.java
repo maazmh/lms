@@ -36,6 +36,7 @@ public class Employee implements Serializable {
 	private String firstName;
 	private String lastName;
 	private String emailId;
+	private String password;
 //	private Integer allocatedLeaves;
 //	private Integer carriedForwardLeaves;
 	private boolean isAdmin;
@@ -178,5 +179,13 @@ public class Employee implements Serializable {
 	}
 	public void setEmpFiscalYrLeaves(Set<EmployeeFiscalYearLeaves> empFiscalYrLeaves) {
 		this.empFiscalYrLeaves = empFiscalYrLeaves;
+	}
+	
+	@Column(name = "password")
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

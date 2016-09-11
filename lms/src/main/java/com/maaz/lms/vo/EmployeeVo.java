@@ -14,6 +14,7 @@ public class EmployeeVo {
 	private Integer leavesAllocated;
 	private Integer leavesCarriedForward;
 	private List<ApproverVo> approvers;
+	private String password;
 	
 	public Integer getIdEmployee() {
 		return idEmployee;
@@ -80,6 +81,12 @@ public class EmployeeVo {
 	}
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 }

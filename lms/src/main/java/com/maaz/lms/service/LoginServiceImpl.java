@@ -16,4 +16,9 @@ public class LoginServiceImpl implements LoginService {
 		return dao.login(username, password);
 	}
 
+	@Override
+	public void changePassword(String username, String password) {
+		dao.changePassword(username, password);
+	}
+
 }

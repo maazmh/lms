@@ -226,4 +226,16 @@ public class CommonServiceImpl implements CommonService {
 		return mapEmployees;
 	}
 
+	@Override
+	public EmployeeVo getEmployee(Integer companyId, Integer empId) {
+		Employee emp = employeeDao.getEmployee(companyId, empId);
+		EmployeeVo vo = new EmployeeVo();
+		vo.setIdEmployee(emp.getIdEmployee());
+		vo.setFirstName(emp.getFirstName());
+		vo.setLastName(emp.getLastName());
+		vo.setEmailId(emp.getEmailId());
+		vo.setPassword(emp.getPassword());
+		return vo;
+	}
+
 }

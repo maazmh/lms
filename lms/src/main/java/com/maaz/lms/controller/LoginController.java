@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.maaz.lms.form.LoginForm;
+import com.maaz.lms.service.CommonService;
 import com.maaz.lms.service.LoginService;
+import com.maaz.lms.vo.EmployeeVo;
 
 @Controller
 public class LoginController {
@@ -21,6 +23,9 @@ public class LoginController {
 	
 	@Autowired
 	LoginService loginService;
+	
+	@Autowired
+	CommonService commonService;
 	
 	@Value("${exception.msg.standard}")
 	String standardExceptionMsg;
@@ -52,6 +57,51 @@ public class LoginController {
 			logger.error("Exception in login",e);
 			model.addObject("exceptionMessage", standardExceptionMsg);
 		}
+		return model;
+	}
+	
+	@RequestMapping(value = "/account", method = RequestMethod.GET)
+	public ModelAndView showAccountPage(HttpSession session, 
+			@ModelAttribute("loginForm") LoginForm loginForm) {
+		ModelAndView model = new ModelAndView("account");
+		
+		Integer empId = (Integer) session.getAttribute("employeeId");
+		logger.info("Employee Id: {}", empId);
+		
+		Integer companyId = (Integer) session.getAttribute("companyAccountId");
+		logger.info("company Id: {}", companyId);
+		
+		//@ TODO: remove hardcoding for company account
+		companyId = 1;
+		empId = 1;
+		
+		EmployeeVo vo = commonService.getEmployee(companyId, empId);
+		loginForm.setUsername(vo.getEmailId());
+		//loginForm.setPassword(vo.getPassword());
+		return model;
+	}
+	
+	@RequestMapping(value = "/account", method = RequestMethod.POST)
+	public ModelAndView changePassword(HttpSession session, 
+			@ModelAttribute("loginForm") LoginForm loginForm) {
+		ModelAndView model = new ModelAndView("account");
+		loginService.changePassword(loginForm.getUsername(), loginForm.getPassword());
+		loginForm.setUsername(null);
+		loginForm.setPassword(null);
+		
+		Integer empId = (Integer) session.getAttribute("employeeId");
+		logger.info("Employee Id: {}", empId);
+		
+		Integer companyId = (Integer) session.getAttribute("companyAccountId");
+		logger.info("company Id: {}", companyId);
+		
+		//@ TODO: remove hardcoding for company account
+		companyId = 1;
+		empId = 1;
+		EmployeeVo vo = commonService.getEmployee(companyId, empId);
+		loginForm.setUsername(vo.getEmailId());
+		
+		model.addObject("successMessage", "Password Changed Successfully");
 		return model;
 	}
 }

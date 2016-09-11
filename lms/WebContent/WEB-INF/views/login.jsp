@@ -19,7 +19,7 @@
 <title>Login</title>
 </head>
 <body>
-	<div class="container" style="padding-top: 25px;">
+	<div class="container" style="padding-top: 12em; width: 30%;">
 		<div id="divHeader">
 			<img alt="Mondia Media" src="http://www.mondiamedia.com/fileadmin/templates/img/logo-print.png" height="30px;">
 		</div>

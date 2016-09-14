@@ -4,8 +4,8 @@ function editEvent(event) {
     $('#event-modal input[name="event-index"]').val(event ? event.id : '');
     $('#event-modal input[name="event-name"]').val(event ? event.name : '');
     $('#event-modal input[name="event-location"]').val(event ? event.location : '');
-    $('#event-modal input[name="event-start-date"]').datepicker('update', event ? event.startDate : '');
-    $('#event-modal input[name="event-end-date"]').datepicker('update', event ? event.endDate : '');
+    $('#event-modal input[name="dtFrom"]').datepicker('update', event ? event.startDate : '');
+    $('#event-modal input[name="dtTo"]').datepicker('update', event ? event.endDate : '');
     $('#event-modal').modal();
 }
 
@@ -27,8 +27,8 @@ function saveEvent() {
         id: $('#event-modal input[name="event-index"]').val(),
         name: $('#event-modal input[name="event-name"]').val(),
         location: $('#event-modal input[name="event-location"]').val(),
-        startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
-        endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate')
+        startDate: $('#event-modal input[name="dtFrom"]').datepicker('getDate'),
+        endDate: $('#event-modal input[name="dtTo"]').datepicker('getDate')
     }
     
     var dataSource = $('#calendar').data('calendar').getDataSource();

@@ -85,28 +85,34 @@ function getData() {
 }
 
 function validate() {
-	if(document.getElementById('dtFrom').value=='' || document.getElementById('dtTo').value=='') {
-		document.getElementById("btnSaveChanges").style.display="none";
-		document.getElementById("divErrorMessage").style.display="block";
-		document.getElementById("divConfirmationMessage").style.display="none";
-		document.getElementById("myModalLabel").innerHTML = "Error";
+	if($('#dtFrom').val()=='' || $('#dtTo').val()=='') {
+		var errMsg = '<ul><li>Dates cannot be empty</li></ul>';	
+		$('#errorMsgModal').html(errMsg);
 		return false;
 	} else {
-		var strFrom = document.getElementById('dtFrom').value;
-		var strTo = document.getElementById('dtTo').value;
+		var strFrom = $('#dtFrom').val();
+		var strTo = $('#dtTo').val();
 		
-		document.getElementById("btnSaveChanges").style.display="block";
-		document.getElementById("divErrorMessage").style.display="none";
-		document.getElementById("divConfirmationMessage").style.display="block";
+		$('#spanDtFrom').html($('#dtFrom').val());
+		$('#spanDtTo').html($('#dtTo').val());
+		$('#spanLeaveType').html($('#leaveType option:selected').text());
+		$('#spanAppliedDays').html($('#dtTo').val());
+		$('#spanRemainingLeaves').html($('#leaveType').val());
 		
-		document.getElementById("myModalLabel").innerHTML = "Confirmation";
+		var dtToArray = $('#dtTo').val().split('/');
+		var dtToMonth = dtToArray[0];
+		var dtToDate = dtToArray[1];
+		var dtToYear = dtToArray[2];
+		$('#dtTo').val(dtToDate + '-' + dtToMonth + '-' + dtToYear);
 		
-		document.getElementById("spanDtFrom").innerHTML = document.getElementById('dtFrom').value;
-		document.getElementById("spanDtTo").innerHTML = document.getElementById('dtTo').value;
-		document.getElementById("spanLeaveType").innerHTML = document.getElementById('leaveType').value;
-		document.getElementById("spanAppliedDays").innerHTML = document.getElementById('dtTo').value;
-		document.getElementById("spanRemainingLeaves").innerHTML = document.getElementById('leaveType').value;
+		var dtFromArray = $('#dtFrom').val().split('/');
+		var dtFromMonth = dtFromArray[0];
+		var dtFromDate = dtFromArray[1];
+		var dtFromYear = dtFromArray[2];
+		$('#dtFrom').val(dtFromDate + '-' + dtFromMonth + '-' + dtFromYear);
 		
+		$('#event-modal').modal('hide');
+		$('#myModal').modal('show');
 		return true;
 	}
 }
@@ -160,7 +166,7 @@ function init() {
 <body onload="init();">
 	<%@ include file="navbar.html" %>
 	<div class="container" style="padding-top: 5em;">
-		<form:form method="post" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
+		<form:form method="post" id="dummyForm" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
 			<form:hidden path="companyAccountId"/>
 			<form:hidden path="employeeId"/>
 			<form:hidden path="leavesAllocated"/>
@@ -198,34 +204,6 @@ function init() {
 					</td>
 				</tr>
 			</table>
-			<hr>
-			<table width="100%">
-				<tr>
-					<td width="50%">
-						<div class="form-group">
-							<label>Select Dates</label>
-							<div class="input-group input-daterange" data-provide="datepicker" data-date-format="dd-mm-yyyy">
-<!-- 							    <input type="text" class="form-control" > -->
-							    <form:input path="dtFrom" cssClass="form-control"  placeholder="Leave From" />
-							    <span class="input-group-addon">to</span>
-<!-- 							    <input type="text" class="form-control" > -->
-							    <form:input path="dtTo" cssClass="form-control"  placeholder="Leave To" />
-							</div>
-							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="return validate();">Apply Leave</button>
-						</div>
-					</td>
-					<td>
-						<div class="form-group">
-							​​<label for="leaveType">Leaves Type</label>
-							<form:select path="leaveType" cssClass="form-control">
-								<form:options items="${leaveTypes}" />
-							</form:select>
-							​​<label for="leaveReason">Leaves Reason</label>
-							<form:input path="leaveReason" cssClass="form-control" />
-						</div>
-					</td>
-				</tr>
-			</table>
 		</form:form>
 	</div>
 	<div id="calendar" class="calendar" data-provide="calendar"></div>
@@ -244,21 +222,61 @@ function init() {
 	        <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
 	      </div>
 	      <div class="modal-body">
-	      	<div id="divErrorMessage" style="display: none;">
-	      		Please Enter Both Dates.
-	      	</div>
-	      	<div id="divConfirmationMessage" style="display: none;">
+	      	<div id="divConfirmationMessage">
 		        Click OK to confirm leaves. <br>
-		        Date From: <span id="spanDtFrom"></span><br>
-		        Date To: <span id="spanDtTo"></span><br>
-		        Leave Type: <span id="spanLeaveType"></span><br>
-		        Applied Days: <span id="spanAppliedDays"></span><br>
-		        Remaining Leaves after Approval: <span id="spanRemainingLeaves"></span>
+		        Date From: <b><span id="spanDtFrom"></span></b><br>
+		        Date To: <b><span id="spanDtTo"></span></b><br>
+		        Leave Type: <b><span id="spanLeaveType"></span></b><br>
+		        Applied Days: <b><span id="spanAppliedDays"></span></b><br>
+		        Remaining Leaves after Approval: <b><span id="spanRemainingLeaves"></span></b>
 	        </div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        <button id="btnSaveChanges" type="button" class="btn btn-primary" onclick="saveLeaves();">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="modal fade" id="event-modal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="eventModalLabel">Confirmation</h4>
+	      </div>
+	      <div class="modal-body">
+		      <form:form method="post" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
+				<form:hidden path="companyAccountId"/>
+				<form:hidden path="employeeId"/>
+				<form:hidden path="leavesAllocated"/>
+				<form:hidden path="leavesUsed"/>
+				<form:hidden path="leavesRemaining"/>
+				<form:hidden path="sickLeavesUsed"/>
+				<form:hidden path="unpaidLeavesUsed"/>
+				<form:hidden path="leavesPendingApproval"/>
+				<form:hidden path="year"/>
+				<p id="errorMsgModal" class="bg-danger"></p>
+		      	<div class="form-group">
+		      		​​<label for="leaveType">Leaves Type</label>
+					<form:select path="leaveType" cssClass="form-control">
+						<form:options items="${leaveTypes}" />
+					</form:select>
+					​​<label for="leaveReason">Leaves Reason</label>
+					<form:input path="leaveReason" cssClass="form-control" />
+		      		<label>Select Dates</label>
+					<div class="input-group input-daterange" data-provide="datepicker" data-date-format="dd-mm-yyyy">
+					    <form:input path="dtFrom" cssClass="form-control"  placeholder="Leave From" />
+					    <span class="input-group-addon">to</span>
+					    <form:input path="dtTo" cssClass="form-control"  placeholder="Leave To" />
+					</div>
+		      	</div>
+		      </form:form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button id="btnValidate" type="button" class="btn btn-primary" onclick="validate();">Save changes</button>
 	      </div>
 	    </div>
 	  </div>

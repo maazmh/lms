@@ -45,10 +45,11 @@ public class LeavesController {
 		try {
 			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
+			leavesForm.setEmployeeId(empId);
 			
-			//@ TODO: Remove these hardcoding below
-			leavesForm.setEmployeeId(1);
-			empId = 1;
+			Integer companyAccountId = (Integer) session.getAttribute(Constants.SESSION_STR_COMP_ACT_ID);
+			logger.info("companyAccountId: {}", companyAccountId);
+			leavesForm.setCompanyAccountId(companyAccountId);
 			
 			Map<Integer, String> mapLeaveTypes = lService.getAllLeaveTypes();
 			model.addObject("leaveTypes", mapLeaveTypes);

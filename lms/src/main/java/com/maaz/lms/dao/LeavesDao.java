@@ -10,6 +10,8 @@ import com.maaz.lms.entity.Leaves;
 
 public interface LeavesDao {
 	public List<Leaves> getLeaves(Integer employeeId);
+	
+	public List<Leaves> getLeavesByDepartment(Integer companyAccountId, Integer departmentId);
 
 	public List<LeaveType> getAllLeaveTypes();
 

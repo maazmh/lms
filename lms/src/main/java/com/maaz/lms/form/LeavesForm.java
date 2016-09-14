@@ -1,6 +1,7 @@
 package com.maaz.lms.form;
 
 public class LeavesForm {
+	private Integer companyAccountId;
 	private Integer employeeId;
 	private String employeeName;
 	private String dtFrom;
@@ -101,5 +102,11 @@ public class LeavesForm {
 	}
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+	public Integer getCompanyAccountId() {
+		return companyAccountId;
+	}
+	public void setCompanyAccountId(Integer companyAccountId) {
+		this.companyAccountId = companyAccountId;
 	}
 }

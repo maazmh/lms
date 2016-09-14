@@ -8,7 +8,7 @@ import com.maaz.lms.vo.LeavesCalendarResponse;
 import com.maaz.lms.vo.LeavesVo;
 
 public interface LeavesService {
-	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer employeeId);
+	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer companyAccountId, Integer employeeId);
 
 	public Map<Integer, String> getAllLeaveTypes();
 	

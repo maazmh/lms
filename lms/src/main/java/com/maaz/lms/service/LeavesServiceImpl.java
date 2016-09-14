@@ -63,10 +63,12 @@ public class LeavesServiceImpl implements LeavesService {
 	DateFormat dfStrToDb = new SimpleDateFormat("dd-MM-yyyy"); 
 	
 	@Override
-	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer employeeId) {
+	public List<LeavesCalendarResponse> getLeavesForCalendar(Integer companyAccountId, Integer employeeId) {
 		List<LeavesCalendarResponse> lstLeavesResponse = null;
 		try {
-			List<Leaves> lstLeaves = leavesDao.getLeaves(employeeId);
+			logger.debug("companyAccountId: {}, employeeId: {}", companyAccountId, employeeId);
+			Employee emp = employeeDao.getEmployee(employeeId);
+			List<Leaves> lstLeaves = leavesDao.getLeavesByDepartment(companyAccountId,emp.getDepartment().getIdDepartment());
 			if(lstLeaves!=null) {
 				lstLeavesResponse = new ArrayList<LeavesCalendarResponse>();
 				for(Leaves leaves : lstLeaves) {

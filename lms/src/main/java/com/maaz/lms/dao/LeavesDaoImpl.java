@@ -39,6 +39,21 @@ public class LeavesDaoImpl implements LeavesDao {
 	}
 	
 	@Override
+	public List<Leaves> getLeavesByDepartment(Integer companyAccountId, Integer departmentId) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from Leaves where employee.department.idDepartment = :idDept");
+			query.setParameter("idDept", departmentId);
+			List<Leaves> list = query.list();
+			logger.info("list size: {}", list!=null ? list.size() : null);
+			return list;
+		} catch(Exception e) {
+			logger.error("Login Exception",e);
+			return null;
+		}
+	}
+	
+	@Override
 	public List<Leaves> getLeaves(Integer employeeId, Date dtFrom, Date dtTo) {
 		try {
 			logger.info("EmployeeId: {}, dtFrom, dtTo", new Object[] {employeeId, dtFrom, dtTo});

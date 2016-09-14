@@ -21,8 +21,8 @@ public class AjaxRestController {
 	LeavesService leavesService;
 	
 	//@JsonView(Views.Public.class)
-	@RequestMapping(value = "/api/getLeaves/{employeeid}", method = RequestMethod.GET)
-	public List<LeavesCalendarResponse> getLeaves(@PathVariable Integer employeeid) {
-		return leavesService.getLeavesForCalendar(employeeid);
+	@RequestMapping(value = "/api/getLeaves/{companyAccountId}/{employeeid}", method = RequestMethod.GET)
+	public List<LeavesCalendarResponse> getLeaves(@PathVariable Integer companyAccountId, @PathVariable Integer employeeid) {
+		return leavesService.getLeavesForCalendar(companyAccountId, employeeid);
 	}
 }

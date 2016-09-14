@@ -25,7 +25,7 @@ function getData() {
 	$.ajax({
 		type : "GET",
 		contentType : "application/json",
-		url : "${home}api/getLeaves/"+document.getElementById("employeeId").value,
+		url : "${home}api/getLeaves/"+$("#employeeId").val()+"/"+$("#companyAccountId").val(),
 		//data : JSON.stringify(search),
 		dataType : 'json',
 		timeout : 100000,
@@ -161,6 +161,7 @@ function init() {
 	<%@ include file="navbar.html" %>
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
+			<form:hidden path="companyAccountId"/>
 			<form:hidden path="employeeId"/>
 			<form:hidden path="leavesAllocated"/>
 			<form:hidden path="leavesUsed"/>

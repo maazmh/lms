@@ -112,7 +112,7 @@ public class LeavesServiceImpl implements LeavesService {
 			 * */
 			Calendar firstDayOfYear = Calendar.getInstance();
 			firstDayOfYear.set(Calendar.YEAR, year);
-			firstDayOfYear.set(Calendar.MONTH, 01);
+			firstDayOfYear.set(Calendar.MONTH, 0);
 			firstDayOfYear.set(Calendar.DAY_OF_MONTH, 01);
 			Calendar lastDayOfYear = Calendar.getInstance();
 			lastDayOfYear.set(Calendar.YEAR, year);
@@ -140,7 +140,7 @@ public class LeavesServiceImpl implements LeavesService {
 				}
 				
 				Integer leavesUsed = 0;
-				Integer leavesRemaining = form.getLeavesAllocated();
+				Integer leavesRemaining = form.getLeavesAllocated() + form.getCarriedForwardLeaves();
 				Integer sickLeavesUsed = 0;
 				Integer unpaidLeavesUsed = 0;
 				Integer leavesPendingApproval = 0;
@@ -168,13 +168,15 @@ public class LeavesServiceImpl implements LeavesService {
 					 * Vacation
 					 * */
 					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_VACATION)) {
-						if(leaveApproved(leave, emp.getApprovers().size())) {
+						Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+						if(leaveApproved!=null && leaveApproved) {
 							leavesUsed = leavesUsed + days;
-							leavesRemaining = leavesRemaining - leavesUsed;
+							leavesRemaining = leavesRemaining - days;
 							leavesVo.setIsApproved(true);
-						} else {
+						} else if(leaveApproved!=null && !leaveApproved) {
+							leavesVo.setIsApproved(false); //Leave Rejected
+						} else if(leaveApproved==null) {
 							leavesPendingApproval = leavesPendingApproval + days;
-							leavesVo.setIsApproved(false);
 						}
 					}
 					
@@ -182,12 +184,14 @@ public class LeavesServiceImpl implements LeavesService {
 					 * Sick
 					 * */
 					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_SICK)) {
-						if(leaveApproved(leave, emp.getApprovers().size())) {
+						Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+						if(leaveApproved!=null && leaveApproved) {
 							sickLeavesUsed = sickLeavesUsed + days;
 							leavesVo.setIsApproved(true);
-						} else {
+						} else if(leaveApproved!=null && !leaveApproved) {
+							leavesVo.setIsApproved(false); //Leave Rejected
+						} else if(leaveApproved==null) {
 							leavesPendingApproval = leavesPendingApproval + days;
-							leavesVo.setIsApproved(false);
 						}
 					}
 					
@@ -195,18 +199,21 @@ public class LeavesServiceImpl implements LeavesService {
 					 * Unpaid
 					 * */
 					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_UNPAID)) {
-						if(leaveApproved(leave, emp.getApprovers().size())) {
+						Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+						if(leaveApproved!=null && leaveApproved) {
 							unpaidLeavesUsed = unpaidLeavesUsed + days;
 							leavesVo.setIsApproved(true);
-						} else {
+						} else if(leaveApproved!=null && !leaveApproved) {
+							leavesVo.setIsApproved(false); //Leave Rejected
+						} else if(leaveApproved==null) {
 							leavesPendingApproval = leavesPendingApproval + days;
-							leavesVo.setIsApproved(false);
 						}
 					}
 					
 					lstLeavesVo.add(leavesVo);
 				}
 				
+				form.setDepartment(emp.getDepartment().getDeptName());
 				form.setLeavesUsed(leavesUsed);
 				form.setLeavesRemaining(leavesRemaining);
 				form.setLeavesPendingApproval(leavesPendingApproval);
@@ -242,13 +249,14 @@ public class LeavesServiceImpl implements LeavesService {
 		return form;
 	}
 	
-	private boolean leaveApproved(Leaves leave, int numberOfApprovers) {
+	private Boolean leaveApproved(Leaves leave, int numberOfApprovers) {
 		/*
 		 * Get Approvals for every leave applied. 
 		 * If leave is approved by all approvers: leavesUsed = leavesUsed + days; && leavesRemaining = allocatedLeaves-leavesUsed;
 		 * If leave not approved by even one approver - leavesPendingApproval + days;
+		 * 
 		 * */
-		boolean leaveApproved = false;
+		Boolean leaveApproved = null;
 		Set<LeaveApprovals> leaveApprovals = leave.getLeaveApprovals();
 		if(leaveApprovals!=null) {
 			int approvals = 0;
@@ -256,7 +264,7 @@ public class LeavesServiceImpl implements LeavesService {
 			while(itr.hasNext()) {
 				LeaveApprovals approval = itr.next();
 				if(!approval.getIsApproved()) {
-					
+					leaveApproved = false;
 				} else if(approval.getIsApproved()) {
 					approvals++;
 				}
@@ -268,7 +276,12 @@ public class LeavesServiceImpl implements LeavesService {
 				leaveApproved = true;
 			}
 		}
-		
+		/*
+		* There could be 3 conditions here.
+		* 1. Leave Approved: leaveApproved = true;
+		* 2. Leave Rejected: leaveApproved = false;
+		* 3. Pending Approval: leaveApproved = null;
+		*/
 		return leaveApproved;
 	}
 

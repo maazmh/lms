@@ -167,74 +167,126 @@ function init() {
 	<%@ include file="navbar.html" %>
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" id="dummyForm" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
-			<form:hidden path="companyAccountId"/>
-			<form:hidden path="employeeId"/>
-			<form:hidden path="leavesAllocated"/>
-			<form:hidden path="leavesUsed"/>
-			<form:hidden path="leavesRemaining"/>
-			<form:hidden path="sickLeavesUsed"/>
-			<form:hidden path="unpaidLeavesUsed"/>
-			<form:hidden path="leavesPendingApproval"/>
-			<form:hidden path="year"/>
 			<table width="100%">
 				<tr>
 					<td>
-						<div class="form-group">
-							<label>Employee Name</label>
-							<p class="form-control-static"><c:out value="${leavesForm.employeeName}"/></p>
-							<label>Leaves Used</label>
-							<p class="form-control-static"><c:out value="${leavesForm.leavesUsed}"/></p>
-							<label>Sick Leaves</label>
-							<p class="form-control-static"><c:out value="${leavesForm.sickLeavesUsed}"/></p>
-							<label>Leaves Pending Approval</label>
-							<p class="form-control-static"><c:out value="${leavesForm.leavesPendingApproval}"/></p>
-						</div>
+						<label>Employee Name</label>
 					</td>
 					<td>
-						<div class="form-group">
-							<label>Leaves Allocated</label>
-							<p class="form-control-static"><c:out value="${leavesForm.leavesAllocated}"/></p>
-							<label>Leaves Remaining</label>
-							<p class="form-control-static"><c:out value="${leavesForm.leavesRemaining}"/></p>
-							<label>Unpaid Leaves</label>
-							<p class="form-control-static"><c:out value="${leavesForm.unpaidLeavesUsed}"/></p>
-							<label>Leaves Carried Forward</label>
-							<p class="form-control-static"><c:out value="${leavesForm.carriedForwardLeaves}"/></p>
-						</div>
+						<p class="form-control-static"><c:out value="${leavesForm.employeeName}"/></p>
+					</td>
+					<td>
+						<label>Department</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.department}"/></p>
+					</td>
+					<td>
+						<label>Leaves Allocated</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.leavesAllocated}"/></p>
+					</td>
+					<td>
+						<label>Leaves Carried Forward</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.carriedForwardLeaves}"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Vacation Leaves</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.leavesUsed}"/></p>
+					</td>
+					<td>
+						<label>Sick Leaves</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.sickLeavesUsed}"/></p>
+					</td>
+					<td>
+						<label>Unpaid Leaves</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.unpaidLeavesUsed}"/></p>
+					</td>
+					<td>
+						<label>Leaves Remaining</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.leavesRemaining}"/></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Leaves Pending Approval</label>
+					</td>
+					<td>
+						<p class="form-control-static"><c:out value="${leavesForm.leavesPendingApproval}"/></p>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>
 					</td>
 				</tr>
 			</table>
 		</form:form>
+		<div id="calendar" class="calendar" data-provide="calendar"></div>
+		<hr>
+		<table class="table table-hover table-bordered">
+			<thead>
+				<tr>
+					<td><b>Name</b></td>
+					<td><b>Leave Type</b></td>
+					<td><b>Leave Note</b></td>
+					<td><b>From</b></td>
+					<td><b>To</b></td>
+					<td><b>Applied On</b></td>
+					<td><b>Approved</b></td>
+				</tr>
+			</thead>
+			<tbody>
+				<c:if test="${not empty leavesForm.lstLeaves}">
+					<c:forEach var="leave" items="${leavesForm.lstLeaves}">
+						<tr id='idTrTable${leave.idLeave}'>
+						<c:if test="${leave.isApproved == true}">
+							<script>$("#idTrTable${leave.idLeave}").addClass('success');</script>
+						</c:if>
+						<c:if test="${leave.isApproved == false}">
+							<script>$("#idTrTable${leave.idLeave}").addClass('danger');</script>
+						</c:if>
+							<td>${leave.employeeName}</td>
+							<td>${leave.leaveType}</td>
+							<td>${leave.leaveDescription}</td>
+							<td>${leave.dtFrom}</td>
+							<td>${leave.dtTo}</td>
+							<td>${leave.dtAppliedOn}</td>
+							<c:if test="${leave.isApproved == true}">
+								<td>Approved</td>
+							</c:if>
+							<c:if test="${leave.isApproved == false}">
+								<td>Rejected</td>
+							</c:if>
+							<c:if test="${empty leave.isApproved}">
+								<td>Pending Approval</td>
+							</c:if>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</tbody>
+		</table>
 	</div>
-	<div id="calendar" class="calendar" data-provide="calendar"></div>
-	<hr>
-	<table class="table-striped">
-		<thead>
-			<tr>
-				<td>Name</td>
-				<td>Leave Type</td>
-				<td>Leave Note</td>
-				<td>From</td>
-				<td>To</td>
-				<td>Applied On</td>
-			</tr>
-		</thead>
-		<tbody>
-			<c:if test="${not empty leavesForm.lstLeaves}">
-				<c:forEach var="leave" items="${leavesForm.lstLeaves}">
-					<tr>
-						<td>${leave.employeeName}</td>
-						<td>${leave.leaveType}</td>
-						<td>${leave.leaveDescription}</td>
-						<td>${leave.dtFrom}</td>
-						<td>${leave.dtTo}</td>
-						<td>${leave.dtAppliedOn}</td>
-						<td>${leave.isApproved}</td>
-					</tr>
-				</c:forEach>
-			</c:if>
-		</tbody>
-	</table>
 	<!-- Button trigger modal -->
 <!-- 	<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"> -->
 <!-- 	  Launch demo modal -->

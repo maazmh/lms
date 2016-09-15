@@ -119,8 +119,11 @@ public class LeavesServiceImpl implements LeavesService {
 			lastDayOfYear.set(Calendar.MONTH, 11);
 			lastDayOfYear.set(Calendar.DAY_OF_MONTH, 31);
 			
+			List<LeavesVo> lstLeavesVo = null;
+			
 			List<Leaves> lstLeaves = leavesDao.getLeaves(employeeId, firstDayOfYear.getTime(), lastDayOfYear.getTime());
 			if(lstLeaves!=null && lstLeaves.size() > 0) {
+				lstLeavesVo = new ArrayList<LeavesVo>();
 				Employee emp = lstLeaves.get(0).getEmployee();
 				form.setEmployeeId(emp.getIdEmployee());
 				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
@@ -142,6 +145,20 @@ public class LeavesServiceImpl implements LeavesService {
 				Integer unpaidLeavesUsed = 0;
 				Integer leavesPendingApproval = 0;
 				for(Leaves leave : lstLeaves) {
+					
+					/*
+					 * Create LeavesVo to create list for the table below the calendar
+					 * */
+					LeavesVo leavesVo = new LeavesVo();
+					leavesVo.setEmployeeId(emp.getIdEmployee());
+					leavesVo.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+					leavesVo.setDtAppliedOn(dfStrToDb.format(leave.getDtAppliedOn()));
+					leavesVo.setDtFrom(dfStrToDb.format(leave.getDtFrom()));
+					leavesVo.setDtTo(dfStrToDb.format(leave.getDtTo()));
+					leavesVo.setIdLeave(leave.getIdLeaves());
+					leavesVo.setLeaveType(leave.getLeaveType().getLeaveType());
+					leavesVo.setLeaveDescription(leave.getLeaveDescription());
+					
 					/*
 					 * Get Difference between the days
 					 * */
@@ -154,8 +171,10 @@ public class LeavesServiceImpl implements LeavesService {
 						if(leaveApproved(leave, emp.getApprovers().size())) {
 							leavesUsed = leavesUsed + days;
 							leavesRemaining = leavesRemaining - leavesUsed;
+							leavesVo.setIsApproved(true);
 						} else {
 							leavesPendingApproval = leavesPendingApproval + days;
+							leavesVo.setIsApproved(false);
 						}
 					}
 					
@@ -165,8 +184,10 @@ public class LeavesServiceImpl implements LeavesService {
 					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_SICK)) {
 						if(leaveApproved(leave, emp.getApprovers().size())) {
 							sickLeavesUsed = sickLeavesUsed + days;
+							leavesVo.setIsApproved(true);
 						} else {
 							leavesPendingApproval = leavesPendingApproval + days;
+							leavesVo.setIsApproved(false);
 						}
 					}
 					
@@ -176,10 +197,14 @@ public class LeavesServiceImpl implements LeavesService {
 					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_UNPAID)) {
 						if(leaveApproved(leave, emp.getApprovers().size())) {
 							unpaidLeavesUsed = unpaidLeavesUsed + days;
+							leavesVo.setIsApproved(true);
 						} else {
 							leavesPendingApproval = leavesPendingApproval + days;
+							leavesVo.setIsApproved(false);
 						}
 					}
+					
+					lstLeavesVo.add(leavesVo);
 				}
 				
 				form.setLeavesUsed(leavesUsed);
@@ -187,6 +212,7 @@ public class LeavesServiceImpl implements LeavesService {
 				form.setLeavesPendingApproval(leavesPendingApproval);
 				form.setSickLeavesUsed(sickLeavesUsed);
 				form.setUnpaidLeavesUsed(unpaidLeavesUsed);
+				form.setLstLeaves(lstLeavesVo);
 			} else {
 				//No Leaves found.
 				Employee emp = employeeDao.getEmployee(employeeId);

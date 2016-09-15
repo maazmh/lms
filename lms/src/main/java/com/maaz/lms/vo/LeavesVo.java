@@ -16,6 +16,7 @@ public class LeavesVo implements Serializable{
 	private String dtTo;
 	private String leaveType;
 	private String leaveDescription;
+	private Boolean isApproved;
 	
 	public Integer getIdLeave() {
 		return idLeave;
@@ -64,6 +65,12 @@ public class LeavesVo implements Serializable{
 	}
 	public void setEmployeeId(Integer employeeId) {
 		this.employeeId = employeeId;
+	}
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
 	}
 	
 	

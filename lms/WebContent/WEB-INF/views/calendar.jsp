@@ -207,7 +207,34 @@ function init() {
 		</form:form>
 	</div>
 	<div id="calendar" class="calendar" data-provide="calendar"></div>
-	
+	<hr>
+	<table class="table-striped">
+		<thead>
+			<tr>
+				<td>Name</td>
+				<td>Leave Type</td>
+				<td>Leave Note</td>
+				<td>From</td>
+				<td>To</td>
+				<td>Applied On</td>
+			</tr>
+		</thead>
+		<tbody>
+			<c:if test="${not empty leavesForm.lstLeaves}">
+				<c:forEach var="leave" items="${leavesForm.lstLeaves}">
+					<tr>
+						<td>${leave.employeeName}</td>
+						<td>${leave.leaveType}</td>
+						<td>${leave.leaveDescription}</td>
+						<td>${leave.dtFrom}</td>
+						<td>${leave.dtTo}</td>
+						<td>${leave.dtAppliedOn}</td>
+						<td>${leave.isApproved}</td>
+					</tr>
+				</c:forEach>
+			</c:if>
+		</tbody>
+	</table>
 	<!-- Button trigger modal -->
 <!-- 	<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"> -->
 <!-- 	  Launch demo modal -->

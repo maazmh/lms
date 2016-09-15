@@ -1,5 +1,9 @@
 package com.maaz.lms.form;
 
+import java.util.List;
+
+import com.maaz.lms.vo.LeavesVo;
+
 public class LeavesForm {
 	private Integer companyAccountId;
 	private Integer employeeId;
@@ -18,6 +22,7 @@ public class LeavesForm {
 	private Integer unpaidLeavesUsed;
 	private Integer leavesPendingApproval;
 	
+	private List<LeavesVo> lstLeaves;
 	
 	public String getDtFrom() {
 		return dtFrom;
@@ -108,5 +113,11 @@ public class LeavesForm {
 	}
 	public void setCompanyAccountId(Integer companyAccountId) {
 		this.companyAccountId = companyAccountId;
+	}
+	public List<LeavesVo> getLstLeaves() {
+		return lstLeaves;
+	}
+	public void setLstLeaves(List<LeavesVo> lstLeaves) {
+		this.lstLeaves = lstLeaves;
 	}
 }

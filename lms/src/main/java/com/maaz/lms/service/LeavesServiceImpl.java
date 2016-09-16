@@ -71,13 +71,23 @@ public class LeavesServiceImpl implements LeavesService {
 			List<Leaves> lstLeaves = leavesDao.getLeavesByDepartment(companyAccountId,emp.getDepartment().getIdDepartment());
 			if(lstLeaves!=null) {
 				lstLeavesResponse = new ArrayList<LeavesCalendarResponse>();
-				for(Leaves leaves : lstLeaves) {
+				for(Leaves leave : lstLeaves) {
 					LeavesCalendarResponse resp = new LeavesCalendarResponse();
-					resp.setId(leaves.getIdLeaves());
-					resp.setName(leaves.getEmployee().getFirstName() + " " + leaves.getEmployee().getLastName());
-					resp.setLocation(leaves.getLeaveType().getLeaveType());
-					resp.setStartDate(dfDbToStr.format(leaves.getDtFrom()));
-					resp.setEndDate(dfDbToStr.format(leaves.getDtTo()));
+					resp.setId(leave.getIdLeaves());
+					resp.setName(leave.getEmployee().getFirstName() + " " + leave.getEmployee().getLastName());
+					resp.setLocation(leave.getLeaveType().getLeaveType());
+					resp.setStartDate(dfDbToStr.format(leave.getDtFrom()));
+					resp.setEndDate(dfDbToStr.format(leave.getDtTo()));
+					resp.setColor(emp.getColor().getColorHex());
+					Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+					if(leaveApproved==null) {
+						//Leave pending approval
+						resp.setColor(Constants.COLOR_CAL_LEAVE_PENDING_APPROVAL); //Set grey color
+						resp.setLocation(resp.getLocation() + " - (Pending Approval)");
+					} else if(leaveApproved!=null && !leaveApproved) {
+						//Leave Rejected - No need to show it on the calendar
+						continue;
+					}
 					lstLeavesResponse.add(resp);
 				}
 			}
@@ -125,6 +135,7 @@ public class LeavesServiceImpl implements LeavesService {
 			if(lstLeaves!=null && lstLeaves.size() > 0) {
 				lstLeavesVo = new ArrayList<LeavesVo>();
 				Employee emp = lstLeaves.get(0).getEmployee();
+				form.setFiscalYearId(lstLeaves.get(0).getFiscalYear().getIdFiscalYear());
 				form.setEmployeeId(emp.getIdEmployee());
 				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
 				Set<EmployeeFiscalYearLeaves> setEmpFiscalYrLeaves = emp.getEmpFiscalYrLeaves();
@@ -297,6 +308,7 @@ public class LeavesServiceImpl implements LeavesService {
 			LeaveType leaveType = leavesDao.getLeaveType(leavesForm.getLeaveType());
 			leave.setLeaveType(leaveType);
 			leave.setLeaveDescription(leavesForm.getLeaveReason());
+			leave.setFiscalYear(leavesDao.getFiscalYear(leavesForm.getFiscalYearId()));
 			
 			Integer idLeave = leavesDao.saveLeave(leave);
 			logger.info("Leave Saved - id: {}", idLeave);

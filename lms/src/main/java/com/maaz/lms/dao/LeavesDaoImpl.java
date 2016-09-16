@@ -26,6 +26,7 @@ public class LeavesDaoImpl implements LeavesDao {
 	@Override
 	public List<Leaves> getLeaves(Integer employeeId) {
 		try {
+			logger.info("getLeaves - employeeId: {}", employeeId);
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Query query = session.createQuery("from Leaves where employee.idEmployee = :idEmployee");
 			query.setParameter("idEmployee", employeeId);
@@ -41,8 +42,9 @@ public class LeavesDaoImpl implements LeavesDao {
 	@Override
 	public List<Leaves> getLeavesByDepartment(Integer companyAccountId, Integer departmentId) {
 		try {
+			logger.info("getLeavesByDepartment: companyAccountId: {}, departmentId: {}", companyAccountId, departmentId);
 			Session session = HibernateUtil.getSessionFactory().openSession();
-			Query query = session.createQuery("from Leaves where employee.department.idDepartment = :idDept");
+			Query query = session.createQuery("from Leaves as l where employee.department.idDepartment = :idDept");
 			query.setParameter("idDept", departmentId);
 			List<Leaves> list = query.list();
 			logger.info("list size: {}", list!=null ? list.size() : null);
@@ -167,6 +169,17 @@ public class LeavesDaoImpl implements LeavesDao {
 			return list;
 		} catch(Exception e) {
 			logger.error("getAllFiscalYears Exception",e);
+			return null;
+		}
+	}
+
+	@Override
+	public FiscalYear getFiscalYear(Integer fiscalYearId) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			return (FiscalYear) session.get(FiscalYear.class, fiscalYearId);
+		} catch(Exception e) {
+			logger.error("getFiscalYear Exception",e);
 			return null;
 		}
 	}

@@ -25,7 +25,7 @@ function getData() {
 	$.ajax({
 		type : "GET",
 		contentType : "application/json",
-		url : "${home}api/getLeaves/"+$("#employeeId").val()+"/"+$("#companyAccountId").val(),
+		url : "${home}api/getLeaves/"+$("#companyAccountId").val()+"/"+$("#employeeId").val(),
 		//data : JSON.stringify(search),
 		dataType : 'json',
 		timeout : 100000,
@@ -77,6 +77,8 @@ function getData() {
 	    			var endDate = obj[j];
 	    			var arrEndDate = endDate.split('-');
 	    			dataSource[x].endDate = new Date(arrEndDate[0], arrEndDate[1]-1, arrEndDate[2]);
+	    		} else if(j=='color') {
+	    			dataSource[x].color = obj[j];
 	    		}
 	    	}
 	    }
@@ -118,6 +120,7 @@ function validate() {
 }
 
 function saveLeaves() {
+	document.getElementById("btnSaveChanges").disabled = true;
 	var form = document.getElementById('leavesForm');
 	form.setAttribute("method", 'post');
     form.setAttribute("action", 'saveLeave');
@@ -135,6 +138,7 @@ function setupNavBar() {
 	$('#navBarLiApproval').removeClass('active');
 	$('#navBarLiAdmin').removeClass('active');
 	$('#navBarLiAccount').removeClass('active');
+	$('#navBarEmpName').html($('#empNameFromSession').val());
 }
 
 function init() {
@@ -165,6 +169,7 @@ function init() {
 </head>
 <body onload="init();">
 	<%@ include file="navbar.html" %>
+	<input type="hidden" id='empNameFromSession' value="<%= session.getAttribute("employeeName") %>">
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" id="dummyForm" action="saveLeave" modelAttribute="leavesForm" commandName="leavesForm" cssClass="form-signin">
 			<table width="100%">
@@ -336,6 +341,7 @@ function init() {
 				<form:hidden path="unpaidLeavesUsed"/>
 				<form:hidden path="leavesPendingApproval"/>
 				<form:hidden path="year"/>
+				<form:hidden path="fiscalYearId"/>
 				<p id="errorMsgModal" class="bg-danger"></p>
 		      	<div class="form-group">
 		      		​​<label for="leaveType">Leaves Type</label>

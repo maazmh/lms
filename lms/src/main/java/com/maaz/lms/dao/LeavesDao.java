@@ -28,4 +28,6 @@ public interface LeavesDao {
 	public List<Leaves> getLeaves(Integer employeeId, Date dtFrom, Date dtTo);
 
 	public List<FiscalYear> getAllFiscalYears();
+
+	public FiscalYear getFiscalYear(Integer fiscalYearId);
 }

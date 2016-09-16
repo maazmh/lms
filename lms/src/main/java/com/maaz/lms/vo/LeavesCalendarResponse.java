@@ -13,6 +13,7 @@ public class LeavesCalendarResponse implements Serializable {
 	private String location;
 	private String startDate;
 	private String endDate;
+	private String color;
 	public Integer getId() {
 		return id;
 	}
@@ -42,5 +43,11 @@ public class LeavesCalendarResponse implements Serializable {
 	}
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
 	}
 }

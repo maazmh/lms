@@ -33,6 +33,7 @@
         <property name="hibernate.connection.autocommit">true</property>
  
  		<mapping class="com.maaz.lms.entity.Employee"/>
+ 		<mapping class="com.maaz.lms.entity.Color"/>
  		<mapping class="com.maaz.lms.entity.Leaves"/>
  		<mapping class="com.maaz.lms.entity.LeaveType"/>
  		<mapping class="com.maaz.lms.entity.Approvers"/>

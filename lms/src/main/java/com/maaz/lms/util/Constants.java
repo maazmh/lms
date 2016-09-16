@@ -10,6 +10,9 @@ public class Constants {
 	
 	public static final String SESSION_STR_EMP_ID = "employeeId";
 	public static final String SESSION_STR_COMP_ACT_ID = "companyAccountId";
+	public static final String SESSION_STR_EMP_NAME = "employeeName";
+	
+	public static final String COLOR_CAL_LEAVE_PENDING_APPROVAL = "#808080";
 	
 	private static Map<Integer, Integer> MAP_FISCAL_YEAR_ID=null;
 	static {

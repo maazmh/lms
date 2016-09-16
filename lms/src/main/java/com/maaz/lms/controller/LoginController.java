@@ -53,6 +53,7 @@ public class LoginController {
 			if(emp!=null) {
 				logger.info("empId: {}", emp.getIdEmployee());
 				session.setAttribute(Constants.SESSION_STR_EMP_ID, emp.getIdEmployee());
+				session.setAttribute(Constants.SESSION_STR_EMP_NAME, emp.getFirstName() + " " + emp.getLastName());
 				session.setAttribute(Constants.SESSION_STR_COMP_ACT_ID, emp.getCompany().getIdCompanyAccount());
 				model.setViewName("redirect:/calendar");
 			} else {

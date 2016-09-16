@@ -43,6 +43,7 @@ public class Employee implements Serializable {
 	private boolean isDeleted;
 	private Date lastLogin;
 	private CompanyAccount company;
+	private Color color;
 	private Set<EmployeeFiscalYearLeaves> empFiscalYrLeaves = new HashSet<EmployeeFiscalYearLeaves>();
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
@@ -187,5 +188,14 @@ public class Employee implements Serializable {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinColumn(name="idColor")
+	public Color getColor() {
+		return color;
+	}
+	public void setColor(Color color) {
+		this.color = color;
 	}
 }

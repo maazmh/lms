@@ -14,6 +14,7 @@ public class LeavesForm {
 	private String leaveReason;
 	private Integer year;
 	private String department;
+	private Integer fiscalYearId;
 	
 	private Integer leavesAllocated;
 	private Integer carriedForwardLeaves;
@@ -126,5 +127,11 @@ public class LeavesForm {
 	}
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+	public Integer getFiscalYearId() {
+		return fiscalYearId;
+	}
+	public void setFiscalYearId(Integer fiscalYearId) {
+		this.fiscalYearId = fiscalYearId;
 	}
 }

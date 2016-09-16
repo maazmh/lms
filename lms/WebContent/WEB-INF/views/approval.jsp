@@ -54,11 +54,13 @@ function setupNavBar() {
 	$('#navBarLiCalendar').removeClass('active');
 	$('#navBarLiAdmin').removeClass('active');
 	$('#navBarLiAccount').removeClass('active');
+	$('#navBarEmpName').html($('#empNameFromSession').val());
 }
 </script>
 </head>
 <body onload="setupNavBar();">
 	<%@ include file="navbar.html" %>
+	<input type="hidden" id='empNameFromSession' value="<%= session.getAttribute("employeeName") %>">
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="approve" modelAttribute="approvalForm" commandName="approvalForm" cssClass="form-signin">
 			<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">

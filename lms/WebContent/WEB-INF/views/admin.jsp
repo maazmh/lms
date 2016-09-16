@@ -36,6 +36,7 @@ function setupNavBar() {
 	$('#navBarLiCalendar').removeClass('active');
 	$('#navBarLiAdmin').addClass('active');
 	$('#navBarLiAccount').removeClass('active');
+	$('#navBarEmpName').html($('#empNameFromSession').val());
 }
 
 function init() { 
@@ -195,6 +196,7 @@ function deleteEmp() {
 </head>
 <body onload="init();setupNavBar();">
 	<%@ include file="navbar.html" %>
+	<input type="hidden" id='empNameFromSession' value="<%= session.getAttribute("employeeName") %>">
 	<div class="container" style="padding-top: 5em;">
 		<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">
 	        <a href="#" class="close" data-dismiss="alert">&times;</a>

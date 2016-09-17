@@ -314,20 +314,21 @@ public class LeavesServiceImpl implements LeavesService {
 			logger.info("Leave Saved - id: {}", idLeave);
 			
 			if(idLeave!=null) {
-				//Send Email to the first Approver.
-				Set<Approvers> approvers = emp.getApprovers();
-				Iterator<Approvers> itr = approvers.iterator();
-				Approvers firstApprover = itr.next();
+				//Send Email to the first in line manager (reportsTo).
+				Employee reportsTo = emp.getReportsTo();
+//				Set<Approvers> approvers = emp.getApprovers();
+//				Iterator<Approvers> itr = approvers.iterator();
+//				Approvers firstApprover = itr.next();
 				
 				logger.info("First Approver for empId: {}, empName: {} is approverEmpId: {}, approverEmpName: {}", 
 						new Object[] {emp.getIdEmployee(), emp.getFirstName(), 
-								firstApprover.getApprover().getIdEmployee(), firstApprover.getApprover().getFirstName()});
+								reportsTo.getIdEmployee(), reportsTo.getFirstName()});
 				
-				String emailTo = firstApprover.getApprover().getEmailId();
+				String emailTo = reportsTo.getEmailId();
 				String[] emailCc = {emp.getEmailId()};
 				
 				String subject = MessageFormat.format(emailSubject, emp.getFirstName());
-				String body = MessageFormat.format(emailBody, firstApprover.getApprover().getFirstName(), 
+				String body = MessageFormat.format(emailBody, reportsTo.getFirstName(), 
 						leave.getLeaveType().getLeaveType(), emp.getFirstName(), 
 						leavesForm.getDtFrom(), leavesForm.getDtTo());
 				emailService.sendEmail(emailTo, emailCc, body, subject);

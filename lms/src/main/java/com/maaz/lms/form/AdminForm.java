@@ -20,6 +20,7 @@ public class AdminForm implements Serializable {
 	private Integer leavesAllocated;
 	private Integer leavesCarriedForward;
 	private List<Integer> approvers;
+	private Integer reportsTo;
 	
 	public String getFirstName() {
 		return firstName;
@@ -86,5 +87,11 @@ public class AdminForm implements Serializable {
 	}
 	public void setLeavesCarriedForward(Integer leavesCarriedForward) {
 		this.leavesCarriedForward = leavesCarriedForward;
+	}
+	public Integer getReportsTo() {
+		return reportsTo;
+	}
+	public void setReportsTo(Integer reportsTo) {
+		this.reportsTo = reportsTo;
 	}
 }

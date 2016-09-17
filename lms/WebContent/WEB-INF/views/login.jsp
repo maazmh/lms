@@ -29,7 +29,7 @@
 		        <strong>Error!</strong>
 		        <span id="jsErrorMessage"></span>
 		    </div>
-			<p id="errorMsgP" class="bg-danger">${errorMessage}</p>
+			<p id="errorMsgP" class="bg-danger">${loginFailedMessage}</p>
 			<p class="bg-success">${successMessage}</p>
 			
 <!-- 			<h2 class="form-signin-heading">Please sign in</h2> -->

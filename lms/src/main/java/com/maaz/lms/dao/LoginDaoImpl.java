@@ -28,7 +28,7 @@ public class LoginDaoImpl implements LoginDao {
 			query.setParameter("username", username);
 			query.setParameter("password", password);
 			List<Employee> list = query.list();
-			logger.info("list size: {}", list!=null ? list.size() : null);
+			logger.info("list size: {}", list!=null && list.size() > 0 ? list.size() : null);
 			return list!=null ? list.get(0) : null;
 		} catch(Exception e) {
 			logger.error("Login Exception",e);

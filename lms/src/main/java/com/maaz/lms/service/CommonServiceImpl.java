@@ -54,6 +54,8 @@ public class CommonServiceImpl implements CommonService {
 				vo.setDepartmentId(emp.getDepartment().getIdDepartment());
 				vo.setDepartmentName(emp.getDepartment().getDeptName());
 				vo.setDeleted(emp.isDeleted());
+				vo.setReportsTo(emp.getReportsTo().getIdEmployee());
+				vo.setPassword(emp.getPassword());
 				Set<Approvers> setApprovers = emp.getApprovers();
 				Iterator<Approvers> itr = setApprovers.iterator();
 				List<ApproverVo> lstApprovers = new ArrayList<ApproverVo>();
@@ -133,6 +135,7 @@ public class CommonServiceImpl implements CommonService {
 			emp.setDepartment(dept);
 			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
 			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
+			emp.setReportsTo(employeeDao.getEmployee(form.getReportsTo()));
 			
 			emp.getApprovers().clear();
 			if(form.getApprovers()!=null && form.getApprovers().size()>0) {

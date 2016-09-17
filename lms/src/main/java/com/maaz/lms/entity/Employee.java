@@ -44,6 +44,7 @@ public class Employee implements Serializable {
 	private Date lastLogin;
 	private CompanyAccount company;
 	private Color color;
+	private Employee reportsTo;
 	private Set<EmployeeFiscalYearLeaves> empFiscalYrLeaves = new HashSet<EmployeeFiscalYearLeaves>();
 	
 	private Set<Approvers> approvers = new HashSet<Approvers>();
@@ -197,5 +198,14 @@ public class Employee implements Serializable {
 	}
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinColumn(name="reportsTo")
+	public Employee getReportsTo() {
+		return reportsTo;
+	}
+	public void setReportsTo(Employee reportsTo) {
+		this.reportsTo = reportsTo;
 	}
 }

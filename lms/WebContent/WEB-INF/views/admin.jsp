@@ -101,6 +101,7 @@ function init() {
         $('#department').val(clickedRow.departmentId);
         $('#leavesAllocated').val(clickedRow.leavesAllocated);
         $('#leavesCarriedForward').val(clickedRow.leavesCarriedForward);
+        $('#reportsTo').selectpicker('val', clickedRow.reportsTo);
         
         var arrApprovers=[];
         for(var i in clickedRow.approvers) {
@@ -138,6 +139,7 @@ function resetModalFieldsForNew() {
     $('#approvers').selectpicker('val', []);
     $('#leavesAllocated').val(null);
     $('#leavesCarriedForward').val(null);
+    $('#reportsTo').val(null);
     $('#admin').val(0);
 }
 
@@ -170,6 +172,10 @@ function validateForm() {
 		val = false;
 		validationMessage += '<li>Select atleast one approver</li>';
 	}
+	if($('#reportsTo').val()=='') {
+		val = false;
+		validationMessage += '<li>Select a staff this employee reports to.</li>';
+	}
 	if($('#leavesAllocated').val()=='') {
 		val = false;
 		validationMessage += '<li>Leaves allocated cannot be null or empty</li>';
@@ -178,6 +184,27 @@ function validateForm() {
 		val = false;
 		validationMessage += '<li>Leaves Carried Forward cannot be null. Enter 0 if no leaves carried forward.</li>';
 	}
+	
+	/*
+		Check if the reportsTo (in line manager) selected is one of the Approvers or viceversa
+	*/
+	if(val==true) {
+		var foundReportsToInApprovers=false;
+		var approvers = $('#approvers').val();
+		for(var i in approvers) {
+			if(approvers[i]==$('#reportsTo').val()) {
+				foundReportsToInApprovers = true;
+			}
+		}
+		if(!foundReportsToInApprovers) {
+			val = foundReportsToInApprovers;
+			var empName = $('#firstName').val()+' '+$('#lastName').val();
+			var reportsToStr = $('#reportsTo option:selected').text();
+			validationMessage += '<li>Since <b>'+ empName +'</b> reports to <b>'+ reportsToStr +
+					'</b>. One of the approvers should be <b>'+ reportsToStr +'</b>. Please select from Approvers dropdown.</li>';
+		}
+	}
+	
 	validationMessage += '</ul>';
 	
 	if(!val) {
@@ -186,12 +213,6 @@ function validateForm() {
 	return val;
 }
 
-function deleteEmpConfirmationModal(empId) {
-	//$('#spanEmpNameToDelete').html(
-}
-function deleteEmp() {
-	
-}
 </script>
 </head>
 <body onload="init();setupNavBar();">
@@ -227,7 +248,7 @@ function deleteEmp() {
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title">Add New Employee</h4>
+	        <h4 class="modal-title">Add/Edit Staff</h4>
 	      </div>
 	      <div class="modal-body">
 	        <form:form method="post" action="save-employee" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
@@ -287,6 +308,16 @@ function deleteEmp() {
 					</tr>
 					<tr>
 						<td width="10%">
+							<label>Reports To</label>
+						</td>
+						<td width="20%">
+							<form:select path="reportsTo" cssClass="selectpicker" data-live-search="true">
+								<form:options items="${mapApprovers}"/>
+							</form:select>
+						</td>
+						<td width="5%">
+						</td>
+						<td width="10%">
 							<label>Approvers</label>
 						</td>
 						<td width="20%">
@@ -295,8 +326,6 @@ function deleteEmp() {
 							<form:select path="approvers" cssClass="selectpicker" multiple="true" data-live-search="true" data-max-options="3">
 								<form:options items="${mapApprovers}"/>
 							</form:select>
-						</td>
-						<td width="5%">
 						</td>
 					</tr>
 					<tr>
@@ -328,25 +357,5 @@ function deleteEmp() {
 	  </div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	
-		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-	  <div class="modal-dialog" style='width: 80%;' role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title">Delete Confirmation</h4>
-	      </div>
-	      <div class="modal-body">
-	      	  Are you sure you want to delete <span id='spanEmpNameToDelete'></span>?
-	      	  <form:form method="post" action="delete-employee" modelAttribute="adminForm" commandName="adminForm" cssClass="form-signin">
-	      	  	<input type="hidden" id="employeeIdToDelete" />
-	      	  </form:form>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary" onclick="deleteEmp();">Delete</button>
-	      </div>
-	    </div><!-- /.modal-content -->
-	  </div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
 </body>
 </html>

@@ -15,6 +15,7 @@ public class EmployeeVo {
 	private Integer leavesCarriedForward;
 	private List<ApproverVo> approvers;
 	private String password;
+	private Integer reportsTo;
 	
 	public Integer getIdEmployee() {
 		return idEmployee;
@@ -87,6 +88,12 @@ public class EmployeeVo {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public Integer getReportsTo() {
+		return reportsTo;
+	}
+	public void setReportsTo(Integer reportsTo) {
+		this.reportsTo = reportsTo;
 	}
 	
 }

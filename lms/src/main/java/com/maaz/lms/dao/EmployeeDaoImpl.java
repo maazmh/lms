@@ -106,7 +106,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			session.save(emp);
 		} catch(Exception e) {
 			logger.error("DAO Exception saveEmployee",e);
-			e.printStackTrace();
 		} finally {
 			session.close();
 		}
@@ -122,7 +121,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			session.update(emp);
 		} catch(Exception e) {
 			logger.error("DAO Exception UpdateEmployee",e);
-			e.printStackTrace();
 		} finally {
 			session.flush();
 			session.close();
@@ -138,7 +136,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			session.delete(approver);
 		} catch(Exception e) {
 			logger.error("DAO Exception saveOrUpdateEmployee",e);
-			e.printStackTrace();
 		} finally {
 			session.close();
 		}

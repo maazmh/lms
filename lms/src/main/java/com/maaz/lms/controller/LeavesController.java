@@ -74,9 +74,7 @@ public class LeavesController {
 			logger.info("Employee Id: {}", empId);
 			
 			//@ TODO: Remove these hardcoding below
-			leavesForm.setEmployeeId(1);
 			leavesForm.setYear(2016);
-			empId = 1;
 			
 			lService.saveLeave(leavesForm);
 			
@@ -101,9 +99,6 @@ public class LeavesController {
 		try {
 			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
 			logger.info("Employee Id: {}", empId);
-			
-			//@ TODO: Remove Hardcoding
-			empId = 2;
 			
 			Integer approverId = empId;
 			List<LeavesVo> lstLeaves = lService.getPendingLeaveApprovals(approverId);

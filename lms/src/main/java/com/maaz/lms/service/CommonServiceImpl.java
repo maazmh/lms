@@ -136,6 +136,7 @@ public class CommonServiceImpl implements CommonService {
 			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
 			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
 			emp.setReportsTo(employeeDao.getEmployee(form.getReportsTo()));
+			emp.setCompany(employeeDao.getCompany(form.getCompanyAccountId()));
 			
 			emp.getApprovers().clear();
 			if(form.getApprovers()!=null && form.getApprovers().size()>0) {

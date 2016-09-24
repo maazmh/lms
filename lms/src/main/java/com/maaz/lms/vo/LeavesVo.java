@@ -14,6 +14,7 @@ public class LeavesVo implements Serializable{
 	private String dtAppliedOn;
 	private String dtFrom;
 	private String dtTo;
+	private Integer noOfDays;
 	private String leaveType;
 	private String leaveDescription;
 	private Boolean isApproved;
@@ -71,6 +72,12 @@ public class LeavesVo implements Serializable{
 	}
 	public void setIsApproved(Boolean isApproved) {
 		this.isApproved = isApproved;
+	}
+	public Integer getNoOfDays() {
+		return noOfDays;
+	}
+	public void setNoOfDays(Integer noOfDays) {
+		this.noOfDays = noOfDays;
 	}
 	
 	

@@ -26,9 +26,11 @@ import com.maaz.lms.entity.EmployeeFiscalYearLeaves;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.LeaveType;
 import com.maaz.lms.entity.Leaves;
+import com.maaz.lms.form.DashboardForm;
 import com.maaz.lms.form.LeavesForm;
 import com.maaz.lms.util.Constants;
 import com.maaz.lms.util.DateUtils;
+import com.maaz.lms.vo.LeavesByMonthVo;
 import com.maaz.lms.vo.LeavesCalendarResponse;
 import com.maaz.lms.vo.LeavesVo;
 
@@ -469,6 +471,245 @@ public class LeavesServiceImpl implements LeavesService {
 		} catch(Exception e) {
 			logger.error("Exception in service approveLeave",e);
 		}
+	}
+
+	@Override
+	public DashboardForm getDataForDashboard(DashboardForm form, Integer empId, Integer year) {
+		try {
+			/*
+			 * Set first and last day of year so that leaves will be recieved only for that year.
+			 * */
+			Calendar firstDayOfYear = Calendar.getInstance();
+			firstDayOfYear.set(Calendar.YEAR, year);
+			firstDayOfYear.set(Calendar.MONTH, 0);
+			firstDayOfYear.set(Calendar.DAY_OF_MONTH, 01);
+			Calendar lastDayOfYear = Calendar.getInstance();
+			lastDayOfYear.set(Calendar.YEAR, year);
+			lastDayOfYear.set(Calendar.MONTH, 11);
+			lastDayOfYear.set(Calendar.DAY_OF_MONTH, 31);
+			
+			List<LeavesVo> lstLeavesVo = null;
+			
+			List<Leaves> lstLeaves = leavesDao.getLeaves(empId, firstDayOfYear.getTime(), lastDayOfYear.getTime());
+			if(lstLeaves!=null && lstLeaves.size() > 0) {
+				lstLeavesVo = new ArrayList<LeavesVo>();
+				Employee emp = lstLeaves.get(0).getEmployee();
+				form.setFiscalYearId(lstLeaves.get(0).getFiscalYear().getIdFiscalYear());
+				form.setEmployeeId(emp.getIdEmployee());
+				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+				Set<EmployeeFiscalYearLeaves> setEmpFiscalYrLeaves = emp.getEmpFiscalYrLeaves();
+				Iterator<EmployeeFiscalYearLeaves> itr = setEmpFiscalYrLeaves.iterator();
+				while(itr.hasNext()) {
+					EmployeeFiscalYearLeaves employeeFiscalYearLeaves = itr.next();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(employeeFiscalYearLeaves.getFiscalYear().getDtTo());
+					if(cal.get(Calendar.YEAR)==year) {
+						form.setLeavesAllocated(employeeFiscalYearLeaves.getLeavesAllocated());
+						form.setCarriedForwardLeaves(employeeFiscalYearLeaves.getLeavesCarriedForward());
+					}
+				}
+				
+				Integer leavesUsed = 0;
+				Integer leavesRemaining = form.getLeavesAllocated() + form.getCarriedForwardLeaves();
+				Integer sickLeavesUsed = 0;
+				Integer unpaidLeavesUsed = 0;
+				Integer leavesPendingApproval = 0;
+				for(Leaves leave : lstLeaves) {
+					
+					/*
+					 * Create LeavesVo to create list for the table below the calendar
+					 * */
+					LeavesVo leavesVo = new LeavesVo();
+					leavesVo.setEmployeeId(emp.getIdEmployee());
+					leavesVo.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+					leavesVo.setDtAppliedOn(dfStrToDb.format(leave.getDtAppliedOn()));
+					leavesVo.setDtFrom(dfStrToDb.format(leave.getDtFrom()));
+					leavesVo.setDtTo(dfStrToDb.format(leave.getDtTo()));
+					leavesVo.setIdLeave(leave.getIdLeaves());
+					leavesVo.setLeaveType(leave.getLeaveType().getLeaveType());
+					leavesVo.setLeaveDescription(leave.getLeaveDescription());
+					leavesVo.setNoOfDays((int) DateUtils.dateDiffExcludeWeekends(leave.getDtFrom(), leave.getDtTo()));
+					
+					/*
+					 * Get Difference between the days
+					 * */
+					int days = (int) DateUtils.dateDiffExcludeWeekends(leave.getDtFrom(), leave.getDtTo());
+					
+					/*
+					 * Vacation
+					 * */
+					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_VACATION)) {
+						Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+						if(leaveApproved!=null && leaveApproved) {
+							leavesUsed = leavesUsed + days;
+							leavesRemaining = leavesRemaining - days;
+							leavesVo.setIsApproved(true);
+						} else if(leaveApproved!=null && !leaveApproved) {
+							leavesVo.setIsApproved(false); //Leave Rejected
+						} else if(leaveApproved==null) {
+							leavesPendingApproval = leavesPendingApproval + days;
+						}
+					}
+					
+					/*
+					 * Sick
+					 * */
+					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_SICK)) {
+						Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+						if(leaveApproved!=null && leaveApproved) {
+							sickLeavesUsed = sickLeavesUsed + days;
+							leavesVo.setIsApproved(true);
+						} else if(leaveApproved!=null && !leaveApproved) {
+							leavesVo.setIsApproved(false); //Leave Rejected
+						} else if(leaveApproved==null) {
+							leavesPendingApproval = leavesPendingApproval + days;
+						}
+					}
+					
+					/*
+					 * Unpaid
+					 * */
+					if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_UNPAID)) {
+						Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+						if(leaveApproved!=null && leaveApproved) {
+							unpaidLeavesUsed = unpaidLeavesUsed + days;
+							leavesVo.setIsApproved(true);
+						} else if(leaveApproved!=null && !leaveApproved) {
+							leavesVo.setIsApproved(false); //Leave Rejected
+						} else if(leaveApproved==null) {
+							leavesPendingApproval = leavesPendingApproval + days;
+						}
+					}
+					
+					lstLeavesVo.add(leavesVo);
+				}
+				
+				form.setDepartment(emp.getDepartment().getDeptName());
+				form.setLeavesUsed(leavesUsed);
+				form.setLeavesRemaining(leavesRemaining);
+				form.setLeavesPendingApproval(leavesPendingApproval);
+				form.setSickLeavesUsed(sickLeavesUsed);
+				form.setUnpaidLeavesUsed(unpaidLeavesUsed);
+				form.setLstLeaves(lstLeavesVo);
+			} else {
+				//No Leaves found.
+				Employee emp = employeeDao.getEmployee(empId);
+				form.setEmployeeId(emp.getIdEmployee());
+				form.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+				Set<EmployeeFiscalYearLeaves> setEmpFiscalYrLeaves = emp.getEmpFiscalYrLeaves();
+				Iterator<EmployeeFiscalYearLeaves> itr = setEmpFiscalYrLeaves.iterator();
+				while(itr.hasNext()) {
+					EmployeeFiscalYearLeaves employeeFiscalYearLeaves = itr.next();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(employeeFiscalYearLeaves.getFiscalYear().getDtTo());
+					if(cal.get(Calendar.YEAR)==year) {
+						form.setLeavesAllocated(employeeFiscalYearLeaves.getLeavesAllocated());
+						form.setCarriedForwardLeaves(employeeFiscalYearLeaves.getLeavesCarriedForward());
+					}
+				}
+				
+				form.setLeavesUsed(null);
+				form.setLeavesRemaining(null);
+				form.setLeavesPendingApproval(null);
+				form.setSickLeavesUsed(null);
+				form.setUnpaidLeavesUsed(null);
+			}
+		} catch(Exception e) {
+			logger.error("Exception in getDataForDashboard Service", e);
+		}
+		return form;
+	}
+
+	@Override
+	public Map<Integer, LeavesByMonthVo> getLeavesByMonth(Integer empId, Integer year) {
+		List<LeavesByMonthVo> lstLeavesVo = null;
+		Map<Integer, LeavesByMonthVo> mapLeavesByMonth = null;
+		try {
+			/*
+			 * Set first and last day of year so that leaves will be recieved only for that year.
+			 * */
+			Calendar firstDayOfYear = Calendar.getInstance();
+			firstDayOfYear.set(Calendar.YEAR, year);
+			firstDayOfYear.set(Calendar.MONTH, 0);
+			firstDayOfYear.set(Calendar.DAY_OF_MONTH, 01);
+			Calendar lastDayOfYear = Calendar.getInstance();
+			lastDayOfYear.set(Calendar.YEAR, year);
+			lastDayOfYear.set(Calendar.MONTH, 11);
+			lastDayOfYear.set(Calendar.DAY_OF_MONTH, 31);
+			
+			List<Leaves> lstLeaves = leavesDao.getLeaves(empId, firstDayOfYear.getTime(), lastDayOfYear.getTime());
+			if(lstLeaves!=null && lstLeaves.size() > 0) {
+				lstLeavesVo = new ArrayList<LeavesByMonthVo>();
+				mapLeavesByMonth = new HashMap<Integer, LeavesByMonthVo>();
+				
+				for(Leaves leave : lstLeaves) {
+					Calendar calDtFrom = Calendar.getInstance();
+					calDtFrom.setTime(leave.getDtFrom());
+					
+					Calendar calDtTo = Calendar.getInstance();
+					calDtTo.setTime(leave.getDtTo());
+					
+					logger.info("calDtFrom: {}, calDtTo: {}", calDtFrom, calDtTo);
+					
+					LeavesByMonthVo leavesVo = null;
+							
+					if(calDtFrom.get(Calendar.MONTH) == calDtTo.get(Calendar.MONTH)) {
+						if(mapLeavesByMonth.get(calDtFrom.get(Calendar.MONTH)) == null) {
+							leavesVo = new LeavesByMonthVo();
+							leavesVo.setMonthId(calDtFrom.get(Calendar.MONTH));
+							mapLeavesByMonth.put(calDtFrom.get(Calendar.MONTH), leavesVo) ;
+						} else {
+							leavesVo = mapLeavesByMonth.get(calDtFrom.get(Calendar.MONTH));
+						}
+						
+						if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_VACATION)) {
+							leavesVo.setNoOfVacations((int) DateUtils.dateDiffExcludeWeekends(leave.getDtFrom(), leave.getDtTo()));
+						}
+						if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_SICK)) {
+							leavesVo.setNoOfSickDays((int) DateUtils.dateDiffExcludeWeekends(leave.getDtFrom(), leave.getDtTo()));
+						}
+						if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_UNPAID)) {
+							leavesVo.setNoOfUnpaidLeaves((int) DateUtils.dateDiffExcludeWeekends(leave.getDtFrom(), leave.getDtTo()));
+						}
+						lstLeavesVo.add(leavesVo);
+					} else {
+						int dtFromMonth = calDtFrom.get(Calendar.MONTH);
+						int dtToMonth = calDtTo.get(Calendar.MONTH);
+						logger.info("dtFromMonth: {}, dtToMonth: {}", dtFromMonth, dtToMonth);
+						
+						do {
+							if(mapLeavesByMonth.get(calDtFrom.get(Calendar.MONTH)) == null) {
+								leavesVo = new LeavesByMonthVo();
+								leavesVo.setMonthId(calDtFrom.get(Calendar.MONTH));
+								mapLeavesByMonth.put(calDtFrom.get(Calendar.MONTH), leavesVo) ;
+							} else {
+								leavesVo = mapLeavesByMonth.get(calDtFrom.get(Calendar.MONTH));
+							}
+							
+//							if(calDtFrom.get(Calendar.MONTH) != leavesVo.getMonthId()) {
+//								leavesVo = new LeavesByMonthVo();
+//								leavesVo.setMonthId(dtFromMonth);
+//								lstLeavesVo.add(leavesVo);
+//							}
+							
+							if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_VACATION)) {
+								leavesVo.setNoOfVacations(leavesVo.getNoOfVacations() != null ? leavesVo.getNoOfVacations()+1 : 1);
+							}
+							if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_SICK)) {
+								leavesVo.setNoOfSickDays(leavesVo.getNoOfSickDays() != null ? leavesVo.getNoOfSickDays()+1 : 1);
+							}
+							if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_UNPAID)) {
+								leavesVo.setNoOfUnpaidLeaves(leavesVo.getNoOfUnpaidLeaves() != null ? leavesVo.getNoOfUnpaidLeaves()+1 : 1);
+							}
+							calDtFrom.add(Calendar.DATE, 1);
+						} while(calDtFrom.after(calDtTo));
+					}
+				}
+			} 
+		} catch(Exception e) {
+			logger.error("Exception in getLeavesByMonth Service", e);
+		}
+		return mapLeavesByMonth;
 	}
 
 }

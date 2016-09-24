@@ -3,7 +3,9 @@ package com.maaz.lms.service;
 import java.util.List;
 import java.util.Map;
 
+import com.maaz.lms.form.DashboardForm;
 import com.maaz.lms.form.LeavesForm;
+import com.maaz.lms.vo.LeavesByMonthVo;
 import com.maaz.lms.vo.LeavesCalendarResponse;
 import com.maaz.lms.vo.LeavesVo;
 
@@ -21,4 +23,9 @@ public interface LeavesService {
 	public void approveLeave(Integer leaveId, Integer approverId, String notes);
 	
 	public void rejectLeave(Integer leaveId, Integer approverId, String rejectionNotes);
+
+	public DashboardForm getDataForDashboard(DashboardForm form, Integer empId, Integer year);
+
+	public Map<Integer, LeavesByMonthVo> getLeavesByMonth(Integer employeeid, Integer year);
+
 }

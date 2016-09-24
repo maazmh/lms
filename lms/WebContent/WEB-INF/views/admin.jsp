@@ -32,6 +32,7 @@
 <script type="text/javascript">
 
 function setupNavBar() {
+	$('#navBarLiDashboard').removeClass('active');
 	$('#navBarLiApproval').removeClass('active');
 	$('#navBarLiCalendar').removeClass('active');
 	$('#navBarLiAdmin').addClass('active');

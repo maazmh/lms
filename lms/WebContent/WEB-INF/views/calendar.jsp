@@ -134,6 +134,7 @@ function cancelModal() {
 }
 
 function setupNavBar() {
+	$('#navBarLiDashboard').removeClass('active');
 	$('#navBarLiCalendar').addClass('active');
 	$('#navBarLiApproval').removeClass('active');
 	$('#navBarLiAdmin').removeClass('active');

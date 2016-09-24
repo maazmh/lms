@@ -50,6 +50,7 @@ function saveChanges() {
 }
 
 function setupNavBar() {
+	$('#navBarLiDashboard').removeClass('active');
 	$('#navBarLiApproval').addClass('active');
 	$('#navBarLiCalendar').removeClass('active');
 	$('#navBarLiAdmin').removeClass('active');

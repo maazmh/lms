@@ -13,20 +13,13 @@
 <link rel="stylesheet"	href="/lms/resources/css/bootstrap-select.min.css">
 
 	
-<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.3.js">
-</script>
-<script type="text/javascript" language="javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js">
-</script>
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.3.js"></script>
+<script type="text/javascript" language="javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
 <script	src="/lms/resources/js/bootstrap-select.js"></script>
 <title>Admin</title>
 <script type="text/javascript">
@@ -38,6 +31,7 @@ function setupNavBar() {
 	$('#navBarLiAdmin').addClass('active');
 	$('#navBarLiAccount').removeClass('active');
 	$('#navBarEmpName').html($('#empNameFromSession').val());
+	$('#navBarLiReport').removeClass('active');
 }
 
 function init() { 

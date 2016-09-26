@@ -140,6 +140,7 @@ function setupNavBar() {
 	$('#navBarLiAdmin').removeClass('active');
 	$('#navBarLiAccount').removeClass('active');
 	$('#navBarEmpName').html($('#empNameFromSession').val());
+	$('#navBarLiReport').removeClass('active');
 }
 
 function init() {

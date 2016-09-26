@@ -29,6 +29,7 @@ function setupNavBar() {
 	$('#navBarLiAdmin').removeClass('active');
 	$('#navBarLiAccount').addClass('active');
 	$('#navBarEmpName').html($('#empNameFromSession').val());
+	$('#navBarLiReport').removeClass('active');
 }
 
 function init() { 

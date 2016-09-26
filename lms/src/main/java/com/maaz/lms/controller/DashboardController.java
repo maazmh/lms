@@ -65,6 +65,11 @@ public class DashboardController {
 //			form = leavesService.getDataForDashboard(form, empId, form.getYear());
 //			
 //			model.addObject("leavesChartData", form.getLstLeaves());
+			LeavesForm leavesForm = new LeavesForm();
+			leavesForm.setYear(form.getYear());
+			leavesForm = lService.getLeavesForForm(leavesForm, empId, leavesForm.getYear());
+			
+			model.addObject("leavesForm", leavesForm);
 			
 		} catch(Exception e) {
 			logger.error("Exception in showDashboard",e);
@@ -73,5 +78,32 @@ public class DashboardController {
 		return model;
 	}
 	
+	
+	@RequestMapping(value = "/quickSaveLeave", method = RequestMethod.POST)
+	public ModelAndView saveLeave(HttpSession session, @ModelAttribute("dashboardForm") DashboardForm dashboardForm) {
+		ModelAndView model = new ModelAndView("calendar");
+		try {
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
+			logger.info("Employee Id: {}", empId);
+			
+			//@ TODO: Remove these hardcoding below
+			dashboardForm.setYear(2016);
+			
+			//lService.saveLeave(dashboardForm);
+			
+			Map<Integer, String> mapLeaveTypes = lService.getAllLeaveTypes();
+			model.addObject("leaveTypes", mapLeaveTypes);
+			
+			//dashboardForm = lService.getLeavesForForm(dashboardForm, empId, dashboardForm.getYear());
+			
+			dashboardForm.setDtFrom(null);
+			dashboardForm.setDtTo(null);
+			dashboardForm.setLeaveReason(null);
+		} catch(Exception e) {
+			logger.error("Exception in saveLeave",e);
+			model.addObject("exceptionMessage", standardExceptionMsg);
+		}
+		return model;
+	}
 	
 }

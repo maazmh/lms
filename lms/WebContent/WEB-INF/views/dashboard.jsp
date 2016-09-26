@@ -9,10 +9,12 @@
 <link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 <link rel="stylesheet"	href="/lms/resources/css/gentelella-custom.css">
+<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script	src="/lms/resources/js/gentelella-custom.js"></script>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
 
 <!-- bootstrap-progressbar -->
 <script src="/lms/resources/js/bootstrap-progressbar.js"></script>
@@ -24,6 +26,7 @@
 function init() {
 	getData();
 	setupNavBar();
+	//setDataForPieChart();
 }
 
 function setupNavBar() {
@@ -34,6 +37,7 @@ function setupNavBar() {
 	$('#navBarLiAccount').removeClass('active');
 	$('#navBarEmpName').html($('#empNameFromSession').val());
 }
+
 
 function getData() {
 	$.ajax({
@@ -160,6 +164,56 @@ function getData() {
 		chart.draw(data, options);
 	}
 }
+
+
+function validateAndSave() {
+	if($('#dtFrom').val()=='' || $('#dtTo').val()=='') {
+		var errMsg = '<ul><li>Dates cannot be empty</li></ul>';	
+		$('#errorMsgModal').html(errMsg);
+		return false;
+	} else {
+		var strFrom = $('#dtFrom').val();
+		var strTo = $('#dtTo').val();
+		
+		$('#spanDtFrom').html($('#dtFrom').val());
+		$('#spanDtTo').html($('#dtTo').val());
+		$('#spanLeaveType').html($('#leaveType option:selected').text());
+		$('#spanAppliedDays').html($('#dtTo').val());
+		$('#spanRemainingLeaves').html($('#leaveType').val());
+		
+		alert('chk');
+		
+		var dtToArray = $('#dtTo').val().split('-');
+		var dtToMonth = dtToArray[1];
+		var dtToDate = dtToArray[0];
+		var dtToYear = dtToArray[2];
+		//$('#dtTo').val(dtToDate + '-' + dtToMonth + '-' + dtToYear);
+		
+		var dtFromArray = $('#dtFrom').val().split('-');
+		var dtFromMonth = dtFromArray[1];
+		var dtFromDate = dtFromArray[0];
+		var dtFromYear = dtFromArray[2];
+		//$('#dtFrom').val(dtFromDate + '-' + dtFromMonth + '-' + dtFromYear);
+		
+
+		var jsDtFrom = new Date(dtFromYear+'-'+dtFromMonth+'-'+dtFromDate);
+		var jsDtTo = new Date(dtToYear+'-'+dtToMonth+'-'+dtToDate);
+		
+// 		alert('from: '+dtFromYear+'-'+dtFromMonth+'-'+dtFromDate);
+// 		alert('to: '+dtToYear+'-'+dtToMonth+'-'+dtToDate);
+		
+// 		alert('from Day: '+jsDtFrom.getDay());
+// 		alert('to day: '+jsDtTo.getDay());
+		
+		alert('before saving check for dates. Leave should not start or end on friday. This is mondia media policy. Different companies may have different policies.');
+		
+		document.getElementById("btnSaveChanges").disabled = true;
+		var form = document.getElementById('leavesForm');
+		form.setAttribute("method", 'post');
+	    form.setAttribute("action", 'saveLeave');
+		form.submit();
+	}
+}
 </script>
 </head>
 <body class="nav-md" onload="init();">
@@ -175,33 +229,33 @@ function getData() {
           <div class="row tile_count">
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i>Leaves Allocated</span>
-              <div class="count">2500</div>
-              <span class="count_bottom"><i class="green">4% </i> From last Week</span>
+              <div class="count green"><c:out value="${leavesForm.leavesAllocated+leavesForm.carriedForwardLeaves}" /></div>
+              <span class="count_bottom"><i class="green"><c:out value="${leavesForm.carriedForwardLeaves}" /> </i> Carried From last Year</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-clock-o"></i> Leaves Taken</span>
-              <div class="count">123.50</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>3% </i> From last Week</span>
+              <div class="count"><c:out value="${leavesForm.leavesUsed}" /></div>
+<!--               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>3% </i> From last Week</span> -->
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i> Sick Leaves Taken</span>
+              <div class="count"><c:out value="${leavesForm.sickLeavesUsed}" /></div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>9</i> Days Allocated per year</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i> Leaves Applied (not approved)</span>
-              <div class="count green">2,500</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+              <div class="count"><c:out value="${leavesForm.leavesPendingApproval}" /></div>
+              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i> </i> Waiting for Approval</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i> Leaves Remaining</span>
-              <div class="count">4,567</div>
-              <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>12% </i> From last Week</span>
+              <div class="count green"><c:out value="${leavesForm.leavesRemaining}" /></div>
+<!--               <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>12% </i> From last Week</span> -->
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i> Unpaid leaves</span>
-              <div class="count">2,315</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i> Leaves Carried forward</span>
-              <div class="count">7,325</div>
-              <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+              <div class="count"><c:out value="${leavesForm.unpaidLeavesUsed}" /></div>
+<!--               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span> -->
             </div>
           </div>
           <!-- /top tiles -->
@@ -243,108 +297,29 @@ function getData() {
             <div class="col-md-4 col-sm-4 col-xs-12">
               <div class="x_panel tile fixed_height_320">
                 <div class="x_title">
-                  <h2>App Versions</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2>Staff Details</h2>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <h4>App Usage across versions</h4>
-                  <div class="widget_summary">
-                    <div class="w_left w_25">
-                      <span>0.1.5.2</span>
-                    </div>
-                    <div class="w_center w_55">
-                      <div class="progress">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 66%;">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="w_right w_20">
-                      <span>123k</span>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
-
-                  <div class="widget_summary">
-                    <div class="w_left w_25">
-                      <span>0.1.5.3</span>
-                    </div>
-                    <div class="w_center w_55">
-                      <div class="progress">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 45%;">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="w_right w_20">
-                      <span>53k</span>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="widget_summary">
-                    <div class="w_left w_25">
-                      <span>0.1.5.4</span>
-                    </div>
-                    <div class="w_center w_55">
-                      <div class="progress">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="w_right w_20">
-                      <span>23k</span>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="widget_summary">
-                    <div class="w_left w_25">
-                      <span>0.1.5.5</span>
-                    </div>
-                    <div class="w_center w_55">
-                      <div class="progress">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 5%;">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="w_right w_20">
-                      <span>3k</span>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="widget_summary">
-                    <div class="w_left w_25">
-                      <span>0.1.5.6</span>
-                    </div>
-                    <div class="w_center w_55">
-                      <div class="progress">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 2%;">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="w_right w_20">
-                      <span>1k</span>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
-
+                  <form class="form-horizontal">
+	                  <div class="form-group">
+					    <label>Name		: </label>
+					    <c:out value="${leavesForm.employeeName}"></c:out>
+					  </div>
+					  <div class="form-group">
+					    <label>Department	:</label>
+					    <c:out value="${leavesForm.department}"></c:out>
+					  </div>
+					  <div class="form-group">
+					    <label>Approvers: </label>
+<%-- 					    <c:out value="${leavesForm.department}"></c:out> --%>
+					  </div>
+					  <div class="form-group">
+					    <label>Next Leave: </label>
+<%-- 					    <c:out value="${leavesForm.department}"></c:out> --%>
+							(From Date) to (To Date)
+					  </div>
+				  </form>
                 </div>
               </div>
             </div>
@@ -352,79 +327,38 @@ function getData() {
             <div class="col-md-4 col-sm-4 col-xs-12">
               <div class="x_panel tile fixed_height_320 overflow_hidden">
                 <div class="x_title">
-                  <h2>Device Usage</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2>Quick Apply Leave</h2>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <table class="" style="width:100%">
-                    <tr>
-                      <th style="width:37%;">
-                        <p>Top 5</p>
-                      </th>
-                      <th>
-                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                          <p class="">Device</p>
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
-                          <p class="">Progress</p>
-                        </div>
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>
-                        <canvas id="canvas1" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
-                      </td>
-                      <td>
-                        <table class="tile_info">
-                          <tr>
-                            <td>
-                              <p><i class="fa fa-square blue"></i>IOS </p>
-                            </td>
-                            <td>30%</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p><i class="fa fa-square green"></i>Android </p>
-                            </td>
-                            <td>10%</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p><i class="fa fa-square purple"></i>Blackberry </p>
-                            </td>
-                            <td>20%</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p><i class="fa fa-square aero"></i>Symbian </p>
-                            </td>
-                            <td>15%</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p><i class="fa fa-square red"></i>Others </p>
-                            </td>
-                            <td>30%</td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
+                	<form:form method="post" action="quickSaveLeave" modelAttribute="dashboardForm" commandName="dashboardForm" cssClass="form-signin">
+						<form:hidden path="companyAccountId"/>
+						<form:hidden path="employeeId"/>
+						<form:hidden path="leavesAllocated"/>
+						<form:hidden path="leavesUsed"/>
+						<form:hidden path="leavesRemaining"/>
+						<form:hidden path="sickLeavesUsed"/>
+						<form:hidden path="unpaidLeavesUsed"/>
+						<form:hidden path="leavesPendingApproval"/>
+						<form:hidden path="year"/>
+						<form:hidden path="fiscalYearId"/>
+						<p id="errorMsgModal" class="bg-danger"></p>
+				      	<div class="form-group">
+				      		​​<label for="leaveType">Leaves Type</label>
+							<form:select path="leaveType" cssClass="form-control">
+								<form:options items="${leaveTypes}" />
+							</form:select>
+							​​<label for="leaveReason">Leaves Reason</label>
+							<form:input path="leaveReason" cssClass="form-control" />
+				      		<label>Select Dates</label>
+							<div class="input-group input-daterange" data-provide="datepicker" data-date-format="dd-mm-yyyy">
+							    <form:input path="dtFrom" cssClass="form-control"  placeholder="Leave From" />
+							    <span class="input-group-addon">to</span>
+							    <form:input path="dtTo" cssClass="form-control"  placeholder="Leave To" />
+							</div>
+				      	</div>
+				      	<button id="btnValidate" type="button" class="btn btn-primary" onclick="validateAndSave();">Apply</button>
+				      </form:form>
                 </div>
               </div>
             </div>
@@ -433,51 +367,12 @@ function getData() {
             <div class="col-md-4 col-sm-4 col-xs-12">
               <div class="x_panel tile fixed_height_320">
                 <div class="x_title">
-                  <h2>Quick Settings</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2>Vacation Leaves</h2>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <div class="dashboard-widget-content">
-                    <ul class="quick-list">
-                      <li><i class="fa fa-calendar-o"></i><a href="#">Settings</a>
-                      </li>
-                      <li><i class="fa fa-bars"></i><a href="#">Subscription</a>
-                      </li>
-                      <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                      <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                      </li>
-                      <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                      <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                      </li>
-                      <li><i class="fa fa-area-chart"></i><a href="#">Logout</a>
-                      </li>
-                    </ul>
-
-                    <div class="sidebar-widget">
-                      <h4>Profile Completion</h4>
-                      <canvas width="150" height="80" id="foo" class="" style="width: 160px; height: 100px;"></canvas>
-                      <div class="goal-wrapper">
-                        <span class="gauge-value pull-left">$</span>
-                        <span id="gauge-text" class="gauge-value pull-left">3,200</span>
-                        <span id="goal-text" class="goal-value pull-right">$5,000</span>
-                      </div>
-                    </div>
-                  </div>
+                	Pie chart or a doughnut chart showing vacation leaves applied vs remaining 
+                	<div id="piechart" style="width: 500px; height: 500px;"></div>
                 </div>
               </div>
             </div>
@@ -504,33 +399,11 @@ function getData() {
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
 			google.charts.load('current', {
-				'packages' : [ 'bar' ]
+				'packages' : [ 'bar', 'pie' ]
 			});
-			//google.charts.setOnLoadCallback(drawChart);
-// 			function drawChart() {
-// 				var data = google.visualization.arrayToDataTable([
-// 						[ 'Year', 'Vacations', 'Sick leave', 'Unpaid leave' ],
-// 						[ 'Jan', 0, 0, 0 ], [ 'Feb', 0, 0, 0 ],
-// 						[ 'Mar', 0, 0, 0 ], [ 'Apr', 0, 0, 0 ],
-// 						[ 'May', 0, 0, 0 ], [ 'Jun', 0, 0, 0 ],
-// 						[ 'Jul', 0, 0, 0 ], [ 'Aug', 0, 0, 0 ],
-// 						[ 'Sept', 0, 0, 0 ], [ 'Oct', 0, 0, 0 ],
-// 						[ 'Nov', 0, 0, 0 ], [ 'Dec', 0, 0, 0 ] ]);
-
-// 				var options = {
-// 					chart : {
-// 						//title: 'Company Performance',
-// 						subtitle : 'Maazs Leave Summary: 2016-2017',
-// 					}
-// 				};
-
-// 				var chart = new google.charts.Bar(document
-// 						.getElementById('columnchart_material'));
-
-// 				chart.draw(data, options);
-// 			}
-	</script>
-	<!-- Google Charts -->    
+			
+			google.charts.load('current', {'packages':['corechart']});
+    </script>  
      
 
     <!-- Doughnut Chart -->

@@ -42,6 +42,7 @@
 			<mapping path="/admin" />
 			<mapping path="/approval" />
 			<mapping path="/approve" />
+			<mapping path="/dashboard" />
 			<beans:bean class="com.maaz.lms.config.LoginInterceptor"></beans:bean>
 		</interceptor>
 	</interceptors>

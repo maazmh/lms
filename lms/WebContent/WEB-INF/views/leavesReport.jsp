@@ -6,18 +6,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css">
-<link rel="stylesheet"	href="/lms/resources/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.1/css/buttons.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.0/css/select.bootstrap.min.css">
+<link rel="stylesheet"	href="/lms/resources/css/bootstrap-select.min.css">
+<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+	
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.3.js"></script>
+<script type="text/javascript" language="javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
 <script	src="/lms/resources/js/bootstrap-select.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
 
 <title>Reports</title>
 <script type="text/javascript">
@@ -36,13 +41,14 @@ function setupNavBar() {
 	$('#navBarLiReport').addClass('active');
 }
 
+var table;
 function setupTable() {
 	/*
 	=====================================================================================
 								Employee Table
 	=====================================================================================
 	*/
-	var table = $('#leaveTable').DataTable( {
+	table = $('#leaveTable').DataTable( {
 	    paging: true,
         //"pagingType": "simple",
 	    autowidth: true,
@@ -55,36 +61,49 @@ function setupTable() {
 	    "processing": true,
         //"serverSide": true,
         //"ajax": "${home}api/getAllEmployees/1",
-        columns: [
-   			{ data: "idLeave" },
-   			{ data: "name" },
-   			{ data: "department" },
-            { data: "dtFrom" },
-            { data: "dtTo" },
-            { data: "approved" }
-            //{ data: "departmentId" }
-//             { data: "idEmployee", render: function ( data, type, full, meta ) {
-// 	                //var btnRendererStr = "<button class='btn btn-primary btn-sm' onClick='editEmp();'>Edit</button> &nbsp;&nbsp;&nbsp;";
-// 	                //btnRendererStr += "<button class='btn btn-primary btn-sm'>Delete</button>"; 
-// 	            	alert(data);
-// 	                var btnRendererStr = "<a href='#' onclick='deleteEmpConfirmationModal("+data+");'><span class='glyphicon glyphicon-remove'></span></a>&nbsp;&nbsp;&nbsp;";
-// 	                return btnRendererStr;
-//             	}
-//             }
-           ],
-//         "columnDefs": [ {
-//             "targets": -1,
-//             "data": "emailId",
-//             "defaultContent": "<button>Click!</button>"
-//         } ],
         select: true
 	} );
+	
+	//alert('table obj: '+table);
+}
+
+function search() {
+	//alert(table);
+	var companyAccountId = $('#companyIdFromSession').val();
+	var empIds = $('#empIds').val();
+	var dept = $('#department').val();
+	var dtFrom = $('#dtFrom').val();
+	var dtTo = $('#dtTo').val();
+	var leaveType = $('#leaveType').val();
+	var isApproved = $('#approved').val();
+	
+	var url = '${home}api/search?companyAccountId='+companyAccountId;
+	if(empIds!=null && empIds!='') {
+		url += '&empIds='+empIds;
+	}
+	if(dept!=null && dept!='') {
+		url += '&dept='+dept;
+	}
+	if(dtFrom!=null && dtTo!=null && dtFrom!='' && dtTo!='') {
+		url += '&dtFrom='+dtFrom+'&dtTo='+dtTo;
+	}
+	if(leaveType!=null && leaveType!='') {
+		url += '&leaveType='+leaveType;
+	}
+	if(isApproved!=null && isApproved!='') {
+		url += '&isApproved='+isApproved;
+	}
+	
+	alert('url: '+ url);
+	
+	table.ajax.url(url).load();
 }
 </script>
 </head>
 <body onload="init();">
 	<%@ include file="navbar.html" %>
 	<input type="hidden" id='empNameFromSession' value="<%= session.getAttribute("employeeName") %>">
+	<input type="hidden" id='companyIdFromSession' value="<%= session.getAttribute("companyAccountId") %>">
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="search" modelAttribute="reportForm" commandName="reportForm" cssClass="form-signin">
 			<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">
@@ -141,7 +160,7 @@ function setupTable() {
 			</div>
 			<div class="row" style="padding-top: 1.5em;">
 				<div class="col-sm-12 col-md-12">
-					<button id="btnSearch" type="button" class="btn btn-primary" onclick="validateAndSave();">Search</button>
+					<button id="btnSearch" type="button" class="btn btn-primary" onclick="search();">Search</button>
 				</div>
 			</div>
 		</form:form>

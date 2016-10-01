@@ -318,7 +318,7 @@ function validateForm() {
 						<td width="20%">
 <!-- 							<table id="tblApprover" class="table table-striped table-bordered" cellspacing="0" width="100%"> -->
 <!-- 							</table> -->
-							<form:select path="approvers" cssClass="selectpicker" multiple="true" data-live-search="true" data-max-options="3">
+							<form:select path="approvers" cssClass="selectpicker" multiple="true" data-live-search="true" data-max-options="6">
 								<form:options items="${mapApprovers}"/>
 							</form:select>
 						</td>

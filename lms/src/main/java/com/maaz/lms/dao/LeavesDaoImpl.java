@@ -183,6 +183,48 @@ public class LeavesDaoImpl implements LeavesDao {
 			return null;
 		}
 	}
+
+	@Override
+	public List<Leaves> searchLeaves(Integer companyAccountId, List<Integer> empIds, Integer dept, String dtFrom,
+			String dtTo, Integer leaveType, Integer isApproved) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			
+			StringBuilder sbQuery = new StringBuilder();
+			sbQuery.append("from Leaves l where l.employee.company.idCompanyAccount = " + companyAccountId);
+			if(empIds!=null && empIds.size() > 0) {
+				sbQuery.append(" and l.employee.idEmployee in (");
+				for(Integer empId : empIds) {
+					sbQuery.append(empId+",");
+				}
+				sbQuery = new StringBuilder(sbQuery.substring(0, sbQuery.length()-1));
+			}
+			sbQuery.append(")");
+			if(dept!=null) {
+				sbQuery.append(" and l.employee.department.idDepartment = " + dept);
+			}
+			if(dtFrom!=null && dtTo!=null) {
+				sbQuery.append(" and dtFrom between " + dtFrom + " and " + dtTo);
+			}
+			if(leaveType!=null) {
+				sbQuery.append(" and l.leaveType.idLeaveType = "+leaveType);
+			}
+			
+			//@ TODO: isApproved is to be done. I commented this because i am thinking of changing the approval system.
+//			if(isApproved!=null) {
+//				sbQuery.append(" and l.isApproved = " + isApproved);
+//			}
+			
+			logger.info("reports search query builder: {}", sbQuery.toString());
+			
+			Query query = session.createQuery(sbQuery.toString());
+			List<Leaves> list = query.list();
+			return list;
+		} catch(Exception e) {
+			logger.error("searchLeaves Exception",e);
+			return null;
+		}
+	}
 	
 	
 }

@@ -18,6 +18,7 @@ public class LeavesVo implements Serializable{
 	private String leaveType;
 	private String leaveDescription;
 	private Boolean isApproved;
+	private String department;
 	
 	public Integer getIdLeave() {
 		return idLeave;
@@ -78,6 +79,12 @@ public class LeavesVo implements Serializable{
 	}
 	public void setNoOfDays(Integer noOfDays) {
 		this.noOfDays = noOfDays;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 	
 	

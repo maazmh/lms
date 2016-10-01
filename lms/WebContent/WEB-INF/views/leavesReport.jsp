@@ -61,6 +61,13 @@ function setupTable() {
 	    "processing": true,
         //"serverSide": true,
         //"ajax": "${home}api/getAllEmployees/1",
+        columns: [
+   			{ data: "employeeName" },
+   			{ data: "department" },
+   			{ data: "dtFrom" },
+            { data: "dtTo" },
+            { data: "isApproved" }
+		],
         select: true
 	} );
 	
@@ -94,7 +101,7 @@ function search() {
 		url += '&isApproved='+isApproved;
 	}
 	
-	alert('url: '+ url);
+	//alert('url: '+ url);
 	
 	table.ajax.url(url).load();
 }
@@ -116,7 +123,7 @@ function search() {
 			<div class="row">
 			    <div class="col-sm-3 col-md-3"><label>Staff Name</label></div>
 			    <div class="col-sm-3 col-md-3">
-			    	<form:select path="empIds" cssClass="selectpicker" multiple="true" data-live-search="true" data-max-options="3">
+			    	<form:select path="empIds" cssClass="selectpicker" multiple="true" data-live-search="true" data-max-options="6">
 						<form:options items="${mapEmployees}"/>
 					</form:select>
 			    </div>

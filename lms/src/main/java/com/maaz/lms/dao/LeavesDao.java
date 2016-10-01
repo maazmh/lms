@@ -30,4 +30,7 @@ public interface LeavesDao {
 	public List<FiscalYear> getAllFiscalYears();
 
 	public FiscalYear getFiscalYear(Integer fiscalYearId);
+	
+	public List<Leaves> searchLeaves(Integer companyAccountId, List<Integer> empIds,
+			Integer dept, String dtFrom, String dtTo, Integer leaveType, Integer isApproved);
 }

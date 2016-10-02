@@ -72,13 +72,25 @@ public class ReportsController {
 		return model;
 	}
 	
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public ModelAndView search(HttpSession session, @ModelAttribute("leavesForm") LeavesForm leavesForm) {
-		ModelAndView model = new ModelAndView("leavesReport");
+	
+	@RequestMapping(value = "/staffLeavesReport", method = RequestMethod.GET)
+	public ModelAndView showEmployeeLeavesReportScreen(HttpSession session, 
+			@ModelAttribute("reportForm") ReportForm reportForm) {
+		ModelAndView model = new ModelAndView("staffLeavesReport");
 		try {
-
+			Integer empId = (Integer) session.getAttribute(Constants.SESSION_STR_EMP_ID);
+			logger.info("Employee Id: {}", empId);
+			reportForm.setEmployeeId(empId);
+			
+			Integer companyAccountId = (Integer) session.getAttribute(Constants.SESSION_STR_COMP_ACT_ID);
+			logger.info("companyAccountId: {}", companyAccountId);
+			reportForm.setCompanyAccountId(companyAccountId);
+			
+			Map<Integer, String> mapDepts = commonService.getAllDepartmentsMap();
+			model.addObject("mapDepts", mapDepts);
+			
 		} catch(Exception e) {
-			logger.error("Exception in search",e);
+			logger.error("Exception in showEmployeeLeavesReportScreen",e);
 			model.addObject("exceptionMessage", standardExceptionMsg);
 		}
 		return model;

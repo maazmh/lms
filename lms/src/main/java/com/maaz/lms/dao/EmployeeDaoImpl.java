@@ -173,4 +173,18 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		return null;
 	}
 
+	@Override
+	public List<Employee> getAllEmployeesByDepartment(Integer companyAccountId, Integer dept) {
+		try {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Query query = session.createQuery("from Employee where company.idCompanyAccount = :idCompanyAccount and department.idDepartment = :idDepartment");
+			query.setParameter("idCompanyAccount", companyAccountId);
+			query.setParameter("idDepartment", dept);
+			return query.list();
+		} catch(Exception e) {
+			logger.error("DAO Exception getAllEmployeesByDepartment",e);
+		}
+		return null;
+	}
+
 }

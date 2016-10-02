@@ -3,6 +3,7 @@ package com.maaz.lms.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +15,14 @@ import org.springframework.stereotype.Service;
 
 import com.maaz.lms.dao.EmployeeDao;
 import com.maaz.lms.dao.LeavesDao;
+import com.maaz.lms.entity.Employee;
+import com.maaz.lms.entity.EmployeeFiscalYearLeaves;
 import com.maaz.lms.entity.LeaveApprovals;
 import com.maaz.lms.entity.Leaves;
+import com.maaz.lms.util.Constants;
+import com.maaz.lms.util.DateUtils;
+import com.maaz.lms.vo.EmployeeLeavesReportVo;
+import com.maaz.lms.vo.EmployeeLeavesVo;
 import com.maaz.lms.vo.LeavesReportVo;
 import com.maaz.lms.vo.LeavesVo;
 
@@ -67,6 +74,131 @@ public class ReportsServiceImpl implements ReportsService {
 		return null;
 	}
 	
+	@Override
+	public EmployeeLeavesReportVo searchDataForEmployeeLeavesReport(Integer companyAccountId, Integer dept, Integer year) {
+		try {
+			
+			/*
+			 * Set first and last day of year so that leaves will be recieved only for that year.
+			 * */
+			Calendar firstDayOfYear = Calendar.getInstance();
+			firstDayOfYear.set(Calendar.YEAR, year);
+			firstDayOfYear.set(Calendar.MONTH, 0);
+			firstDayOfYear.set(Calendar.DAY_OF_MONTH, 01);
+			Calendar lastDayOfYear = Calendar.getInstance();
+			lastDayOfYear.set(Calendar.YEAR, year);
+			lastDayOfYear.set(Calendar.MONTH, 11);
+			lastDayOfYear.set(Calendar.DAY_OF_MONTH, 31);
+			
+			
+			EmployeeLeavesReportVo reportVo = new EmployeeLeavesReportVo();
+			List<EmployeeLeavesVo> lstEmpLeaves = new ArrayList<EmployeeLeavesVo>();
+			
+			List<Employee> lstEmployee = null;
+			if(dept!=null) {
+				lstEmployee = employeeDao.getAllEmployeesByDepartment(companyAccountId, dept);
+			} else {
+				lstEmployee = employeeDao.getAllEmployees(companyAccountId);
+			}
+			for(Employee emp : lstEmployee) {
+				reportVo.setRecordsTotal(lstEmployee.size());
+				
+				EmployeeLeavesVo empVo = new EmployeeLeavesVo();
+				empVo.setEmployeeId(emp.getIdEmployee());
+				empVo.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+				empVo.setDepartment(emp.getDepartment().getDeptName());
+				
+				Set<EmployeeFiscalYearLeaves> setFiscalYear = emp.getEmpFiscalYrLeaves();
+				Iterator<EmployeeFiscalYearLeaves> itrEmpFiscal = setFiscalYear.iterator();
+				while(itrEmpFiscal.hasNext()) {
+					EmployeeFiscalYearLeaves empFiscalYr = itrEmpFiscal.next();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(empFiscalYr.getFiscalYear().getDtTo());
+					if(cal.get(Calendar.YEAR)==year) {
+						empVo.setLeavesAllocated(empFiscalYr.getLeavesAllocated());
+						empVo.setLeavesCarriedForward(empFiscalYr.getLeavesCarriedForward());
+					}
+				}
+				
+				
+				Integer leavesUsed = 0;
+				Integer leavesRemaining = empVo.getLeavesAllocated() + empVo.getLeavesCarriedForward();
+				Integer sickLeavesUsed = 0;
+				Integer unpaidLeavesUsed = 0;
+				Integer leavesPendingApproval = 0; 
+				Integer leavesRejected = 0;
+				
+				List<Leaves> lstLeaves = leavesDao.getLeaves(emp.getIdEmployee(), firstDayOfYear.getTime(), lastDayOfYear.getTime());
+				if(lstLeaves!=null && lstLeaves.size() > 0) {
+					for(Leaves leave : lstLeaves) {
+						
+						/*
+						 * Get Difference between the days
+						 * */
+						int days = (int) DateUtils.dateDiffExcludeWeekends(leave.getDtFrom(), leave.getDtTo());
+						
+						/*
+						 * Vacation
+						 * */
+						if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_VACATION)) {
+							Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+							if(leaveApproved!=null && leaveApproved) {
+								leavesUsed = leavesUsed + days;
+								leavesRemaining = leavesRemaining - days;
+							} else if(leaveApproved!=null && !leaveApproved) {
+								leavesRejected = leavesRejected + days; //Leave Rejected
+							} else if(leaveApproved==null) {
+								leavesPendingApproval = leavesPendingApproval + days;
+							}
+						}
+						
+						/*
+						 * Sick
+						 * */
+						if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_SICK)) {
+							Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+							if(leaveApproved!=null && leaveApproved) {
+								sickLeavesUsed = sickLeavesUsed + days;
+							} else if(leaveApproved!=null && !leaveApproved) {
+								leavesRejected = leavesRejected + days; //Leave Rejected
+							} else if(leaveApproved==null) {
+								leavesPendingApproval = leavesPendingApproval + days;
+							}
+						}
+						
+						/*
+						 * Unpaid
+						 * */
+						if(leave.getLeaveType().getIdLeaveType().equals(Constants.LEAVE_TYPE_UNPAID)) {
+							Boolean leaveApproved = leaveApproved(leave, emp.getApprovers().size());
+							if(leaveApproved!=null && leaveApproved) {
+								unpaidLeavesUsed = unpaidLeavesUsed + days;
+							} else if(leaveApproved!=null && !leaveApproved) {
+								leavesRejected = leavesRejected + days; //Leave Rejected
+							} else if(leaveApproved==null) {
+								leavesPendingApproval = leavesPendingApproval + days;
+							}
+						}
+					}
+				}
+				
+				empVo.setVacationLeaves(leavesUsed);
+				empVo.setSickLeaves(sickLeavesUsed);
+				empVo.setUnpaidLeaves(unpaidLeavesUsed);
+				empVo.setUnApprovedLeaves(leavesPendingApproval);
+				empVo.setLeavesRemaining(leavesRemaining);
+				empVo.setLeavesRejected(leavesRejected);
+				
+				lstEmpLeaves.add(empVo);
+			}
+			reportVo.setData(lstEmpLeaves);
+			return reportVo;
+		} catch(Exception e) {
+			logger.error("Exception in Service - searchDataForEmployeeLeavesReport",e);
+		}
+		return null;
+	}
+	
 	
 	private Boolean leaveApproved(Leaves leave, int numberOfApprovers) {
 		/*
@@ -103,5 +235,6 @@ public class ReportsServiceImpl implements ReportsService {
 		*/
 		return leaveApproved;
 	}
+
 
 }

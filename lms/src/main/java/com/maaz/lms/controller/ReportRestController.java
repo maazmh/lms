@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maaz.lms.service.ReportsService;
+import com.maaz.lms.vo.EmployeeLeavesReportVo;
 import com.maaz.lms.vo.LeavesReportVo;
 
 @RestController
@@ -33,5 +34,13 @@ public class ReportRestController {
 				new Object[] {companyAccountId, 
 						empIds!=null ? empIds.toArray() : null, dept, dtFrom, dtTo, leaveType, isApproved});
 		return reportService.searchDataForLeavesReport(companyAccountId, empIds, dept, dtFrom, dtTo, leaveType, isApproved);
+	}
+	
+	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/getEmployeesLeavesReport", method = RequestMethod.GET)
+	public EmployeeLeavesReportVo getEmployeesLeavesReport(@RequestParam(value="companyAccountId", required=true) Integer companyAccountId, 
+			@RequestParam(value="dept", required=false) Integer dept, @RequestParam(value="year", required=false) Integer year) {
+		logger.debug("search: companyAccountId: {}, dept: {}", 
+				new Object[] {companyAccountId, dept});
+		return reportService.searchDataForEmployeeLeavesReport(companyAccountId, dept, year);
 	}
 }

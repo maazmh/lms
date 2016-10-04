@@ -6,11 +6,24 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.1/css/buttons.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.0/css/select.bootstrap.min.css">
+<link rel="stylesheet"	href="/lms/resources/css/bootstrap-select.min.css">
+<link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.3.js"></script>
+<script type="text/javascript" language="javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+<script	src="/lms/resources/js/bootstrap-select.js"></script>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+
 <title>Approval</title>
 <script type="text/javascript">
 function approve(leaveId, empName, from, to, leaveType) {
@@ -58,11 +71,29 @@ function setupNavBar() {
 	$('#navBarEmpName').html($('#empNameFromSession').val());
 	$('#navBarLiReport').removeClass('active');
 }
+
+
+function setupDataTable() {
+	var table = $('#approvalTable').DataTable( {
+	    paging: true,
+        //"pagingType": "simple",
+	    autowidth: true,
+	    //ordering: false,
+	    searching:true,
+	    "search": {
+	       "smart": true
+	    },
+	    pagelength:20,
+	    select: true
+	} );
+}
 </script>
 </head>
-<body onload="setupNavBar();">
+<body onload="setupNavBar();setupDataTable();">
 	<%@ include file="navbar.html" %>
 	<input type="hidden" id='empNameFromSession' value="<%= session.getAttribute("employeeName") %>">
+	<input type="hidden" id='empIdFromSession' value="<%= session.getAttribute("employeeId") %>">
+	<input type="hidden" id='companyIdFromSession' value="<%= session.getAttribute("companyAccountId") %>">
 	<div class="container" style="padding-top: 5em;">
 		<form:form method="post" action="approve" modelAttribute="approvalForm" commandName="approvalForm" cssClass="form-signin">
 			<div id="divJsErrorMessages" style="display: none;" class="alert alert-danger alert-error">
@@ -76,10 +107,11 @@ function setupNavBar() {
 			<form:hidden path="note"/>
 			<input type="hidden" id="selectedAction"/>
 			
-			<table class="table table-hover">
+			<table id="approvalTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
 				<thead>
 					<tr>
 						<td><b>Name</b></td>
+						<td><b>Department</b></td>
 						<td><b>From</b></td>
 						<td><b>To</b></td>
 						<td><b>Leave Type</b></td>
@@ -93,6 +125,7 @@ function setupNavBar() {
 						<c:forEach var="leave" items="${approvalForm.leaves}">
 							<tr>
 								<td>${leave.employeeName}</td>
+								<td>${leave.department}</td>
 								<td>${leave.dtFrom}</td>
 								<td>${leave.dtTo}</td>
 								<td>${leave.leaveType}</td>

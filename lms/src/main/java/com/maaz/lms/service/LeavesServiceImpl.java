@@ -372,6 +372,7 @@ public class LeavesServiceImpl implements LeavesService {
 					vo.setDtTo(dfStrToDb.format(leave.getDtTo()));
 					vo.setLeaveType(leave.getLeaveType().getLeaveType());
 					vo.setLeaveDescription(leave.getLeaveDescription());
+					vo.setDepartment(leave.getEmployee().getDepartment().getDeptName());
 					lstLeavesVo.add(vo);
 				}
 			}

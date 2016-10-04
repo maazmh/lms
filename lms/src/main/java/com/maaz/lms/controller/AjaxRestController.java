@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maaz.lms.service.LeavesService;
+import com.maaz.lms.vo.LeaveApprovalsVo;
 import com.maaz.lms.vo.LeavesByMonthVo;
 import com.maaz.lms.vo.LeavesCalendarResponse;
+import com.maaz.lms.vo.LeavesVo;
 
 @RestController
 public class AjaxRestController {
@@ -40,5 +42,24 @@ public class AjaxRestController {
 		
 		Map<Integer, LeavesByMonthVo> mapLeavesByMonth = leavesService.getLeavesByMonth(employeeid, year);
 		return mapLeavesByMonth;
+	}
+	
+	
+	/**
+	 * I am not using this method. The datatable is setup in a different way here. 
+	 * This API call is not needed now.
+	 * */
+	@RequestMapping(value = "/api/getPendingLeaveApprovals/{companyAccountId}/{approverId}", method = RequestMethod.GET, produces={"application/json"})
+	public LeaveApprovalsVo getPendingLeaveApprovals(@PathVariable Integer companyAccountId, @PathVariable Integer approverId) {
+		logger.info("getPendingLeaveApprovals - companyAccountId: {}, approverId: {}", companyAccountId, approverId);
+		List<LeavesVo> lstLeavesVo = leavesService.getPendingLeaveApprovals(approverId);
+		if(lstLeavesVo!=null && lstLeavesVo.size()>0) {
+			LeaveApprovalsVo vo = new LeaveApprovalsVo();
+			vo.setData(lstLeavesVo);
+			vo.setRecordsTotal(lstLeavesVo.size());
+			return vo;
+		} else {
+			return null;
+		}
 	}
 }

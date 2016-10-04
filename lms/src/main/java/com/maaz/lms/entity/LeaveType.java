@@ -7,8 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "LeaveType")
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
 public class LeaveType implements Serializable {
 	/**
 	 * 

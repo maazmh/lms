@@ -21,11 +21,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "Employee")
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
 public class Employee implements Serializable {
 	/**
 	 * 

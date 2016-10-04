@@ -21,16 +21,24 @@
         <property name="current_session_context_class">thread</property>
 
         <!-- Disable the second-level cache  -->
-        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+<!--         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property> -->
         
         <!-- Echo all executed SQL to stdout -->
         <property name="show_sql">false</property>
         
         <property name="hbm2ddl.auto">validate</property>
         
-        <property name="hibernate.cache.use_query_cache">false</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.connection.autocommit">true</property>
+        
+        <property name="hibernate.cache.region.factory_class">
+	        org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+	   </property>
+        
+        <!-- enable second level cache and query cache -->
+		 <property name="hibernate.cache.use_second_level_cache">true</property>
+		 <property name="hibernate.cache.use_query_cache">true</property>
+ 		 <property name="net.sf.ehcache.configurationResourceName">/lms-ehcache.xml</property>
  
  		<mapping class="com.maaz.lms.entity.Employee"/>
  		<mapping class="com.maaz.lms.entity.Color"/>

@@ -10,8 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "FiscalYear")
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
 public class FiscalYear implements Serializable {
 	/**
 	 * 

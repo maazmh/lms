@@ -15,8 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "LeaveApprovals")
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
 public class LeaveApprovals implements Serializable{
 	/**
 	 * 

@@ -178,6 +178,7 @@ public class CommonServiceImpl implements CommonService {
 			emp.setFirstName(form.getFirstName());
 			emp.setLastName(form.getLastName());
 			emp.setEmailId(form.getEmailId());
+			emp.setReportsTo(employeeDao.getEmployee(form.getReportsTo()));
 			Department dept = employeeDao.getDepartment(form.getDepartment());
 			emp.setDepartment(dept);
 			emp.setAdmin(form.getAdmin().equals(0) ? false : true);

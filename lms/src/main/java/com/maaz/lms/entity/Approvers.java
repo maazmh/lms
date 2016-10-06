@@ -25,7 +25,7 @@ public class Approvers implements Serializable {
 	private Employee approver;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idApprovers")
 	public Integer getIdApprovers() {
 		return idApprovers;

@@ -24,7 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "Leaves")
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(usage=CacheConcurrencyStrategy.NONE)
 public class Leaves implements Serializable {
 
 	/**
@@ -45,7 +45,7 @@ public class Leaves implements Serializable {
 	private Set<LeaveApprovals> leaveApprovals = new HashSet<LeaveApprovals>();
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idLeaves")
 	public Integer getIdLeaves() {
 		return idLeaves;

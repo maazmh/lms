@@ -35,7 +35,7 @@ public class LeaveApprovals implements Serializable{
 	private String notes;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idLeaveApprovals")
 	public Integer getIdLeaveApprovals() {
 		return idLeaveApprovals;

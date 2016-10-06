@@ -28,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "Employee")
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(usage=CacheConcurrencyStrategy.NONE)
 public class Employee implements Serializable {
 	/**
 	 * 
@@ -50,13 +50,13 @@ public class Employee implements Serializable {
 	private Employee reportsTo;
 	private Set<EmployeeFiscalYearLeaves> empFiscalYrLeaves = new HashSet<EmployeeFiscalYearLeaves>();
 	
-	private Set<Approvers> approvers = new HashSet<Approvers>();
-	private Set<Leaves> leaves = new HashSet<Leaves>();
+	private Set<Approvers> approvers;
+	private Set<Leaves> leaves;
 	
 	private Department department;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idEmployee")
 	public Integer getIdEmployee() {
 		return idEmployee;

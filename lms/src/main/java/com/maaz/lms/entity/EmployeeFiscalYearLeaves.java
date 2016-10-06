@@ -31,7 +31,7 @@ public class EmployeeFiscalYearLeaves implements Serializable {
 	private Integer leavesCarriedForward;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idEmployeeFiscalYearLeaves")
 	public Integer getIdEmployeeFiscalYearLeaves() {
 		return idEmployeeFiscalYearLeaves;

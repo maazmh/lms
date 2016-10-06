@@ -15,9 +15,9 @@ public interface EmployeeDao {
 
 	public List<Department> getAllDepartments();
 
-	public void saveEmployee(Employee emp);
+	public void saveEmployee(AdminForm form, Employee emp);
 	
-	public void updateEmployee(Employee emp);
+	public void updateEmployee(AdminForm form, Employee emp);
 	
 	public void deleteApprovers(Approvers approver);
 

@@ -99,26 +99,116 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 
 	@Override
-	public void saveEmployee(Employee emp) {
+	public void saveEmployee(AdminForm form, Employee emp) {
 		Session session = null;
 		try {
 			session = HibernateUtil.getSessionFactory().openSession();
+			
+			
+			emp = new Employee();
+			CompanyAccount company = (CompanyAccount) session.get(CompanyAccount.class, form.getCompanyAccountId());
+			emp.setCompany(company);
+			emp.setIdEmployee(form.getEmployeeId());
+			emp.setFirstName(form.getFirstName());
+			emp.setLastName(form.getLastName());
+			emp.setEmailId(form.getEmailId());
+			emp.setReportsTo((Employee) session.get(Employee.class, form.getReportsTo()));
+			Department dept = (Department) session.get(Department.class, form.getDepartment());
+			emp.setDepartment(dept);
+			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
+			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
+			
+			Set<Approvers> setApprovers = null;
+			if(form.getApprovers()!=null && form.getApprovers().size()>0) {
+				setApprovers = new HashSet<Approvers>();
+				for(Integer approverId : form.getApprovers()) {
+					Approvers approvers = new Approvers();
+					Employee approver = (Employee) session.get(Employee.class, approverId);
+					approvers.setEmployee(emp);
+					approvers.setApprover(approver);
+					setApprovers.add(approvers);
+				}
+			}
+			emp.setApprovers(setApprovers);
+			
+			Calendar now = Calendar.getInstance();
+			EmployeeFiscalYearLeaves empFisc = new EmployeeFiscalYearLeaves();
+			empFisc.setEmployee(emp);
+			empFisc.setLeavesAllocated(form.getLeavesAllocated());
+			empFisc.setLeavesCarriedForward(form.getLeavesCarriedForward());
+			int yearNow = now.get(Calendar.YEAR);
+			List<FiscalYear> lstFiscalYrs = leavesDao.getAllFiscalYears();
+			for(FiscalYear fy : lstFiscalYrs) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(fy.getDtTo());
+				if(yearNow==cal.get(Calendar.YEAR)) {
+					empFisc.setFiscalYear(fy);
+				}
+			}
+			Set<EmployeeFiscalYearLeaves> setEmpFisc = new HashSet<EmployeeFiscalYearLeaves>();
+			setEmpFisc.add(empFisc);
+			emp.setEmpFiscalYrLeaves(setEmpFisc);
+			
+			
 			session.save(emp);
 		} catch(Exception e) {
 			logger.error("DAO Exception saveEmployee",e);
 		} finally {
+			session.flush();
 			session.close();
 		}
 		
 	}
 	
 	@Override
-	public void updateEmployee(Employee emp) {
+	public void updateEmployee(AdminForm form, Employee emp) {
 		Session session = null;
 		try {
 			session = HibernateUtil.getSessionFactory().openSession();
 			
-			session.update(emp);
+			emp = (Employee) session.get(Employee.class, form.getEmployeeId());
+			emp.setIdEmployee(form.getEmployeeId());
+			emp.setFirstName(form.getFirstName());
+			emp.setLastName(form.getLastName());
+			emp.setEmailId(form.getEmailId());
+			Department dept = (Department) session.get(Department.class, form.getDepartment());
+			emp.setDepartment(dept);
+			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
+			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
+			emp.setReportsTo((Employee) session.get(Employee.class, form.getReportsTo()));
+			emp.setCompany((CompanyAccount) session.get(CompanyAccount.class, form.getCompanyAccountId()));
+			
+			emp.getApprovers().clear();
+			session.flush();
+			if(form.getApprovers()!=null && form.getApprovers().size()>0) {
+				for(Integer approverId : form.getApprovers()) {
+					Approvers approvers = new Approvers();
+					Employee approver = (Employee) session.get(Employee.class, approverId);
+					approvers.setEmployee(emp);
+					approvers.setApprover(approver);
+					emp.getApprovers().add(approvers);
+				}
+			}
+			
+			Calendar now = Calendar.getInstance();
+			EmployeeFiscalYearLeaves empFisc = new EmployeeFiscalYearLeaves();
+			empFisc.setEmployee(emp);
+			empFisc.setLeavesAllocated(form.getLeavesAllocated());
+			empFisc.setLeavesCarriedForward(form.getLeavesCarriedForward());
+			int yearNow = now.get(Calendar.YEAR);
+			List<FiscalYear> lstFiscalYrs = leavesDao.getAllFiscalYears();
+			for(FiscalYear fy : lstFiscalYrs) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(fy.getDtTo());
+				if(yearNow==cal.get(Calendar.YEAR)) {
+					empFisc.setFiscalYear(fy);
+				}
+			}
+			emp.getEmpFiscalYrLeaves().clear();
+			session.flush();
+			emp.getEmpFiscalYrLeaves().add(empFisc);
+			
+			session.merge(emp);
 		} catch(Exception e) {
 			logger.error("DAO Exception UpdateEmployee",e);
 		} finally {

@@ -126,96 +126,15 @@ public class CommonServiceImpl implements CommonService {
 			/**
 			 * Update
 			 * */
-			emp = employeeDao.getEmployee(form.getEmployeeId());
-			emp.setIdEmployee(form.getEmployeeId());
-			emp.setFirstName(form.getFirstName());
-			emp.setLastName(form.getLastName());
-			emp.setEmailId(form.getEmailId());
-			Department dept = employeeDao.getDepartment(form.getDepartment());
-			emp.setDepartment(dept);
-			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
-			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
-			emp.setReportsTo(employeeDao.getEmployee(form.getReportsTo()));
-			emp.setCompany(employeeDao.getCompany(form.getCompanyAccountId()));
 			
-			emp.getApprovers().clear();
-			if(form.getApprovers()!=null && form.getApprovers().size()>0) {
-				for(Integer approverId : form.getApprovers()) {
-					Approvers approvers = new Approvers();
-					Employee approver = employeeDao.getEmployee(approverId);
-					approvers.setEmployee(emp);
-					approvers.setApprover(approver);
-					emp.getApprovers().add(approvers);
-				}
-			}
-			
-			Calendar now = Calendar.getInstance();
-			EmployeeFiscalYearLeaves empFisc = new EmployeeFiscalYearLeaves();
-			empFisc.setEmployee(emp);
-			empFisc.setLeavesAllocated(form.getLeavesAllocated());
-			empFisc.setLeavesCarriedForward(form.getLeavesCarriedForward());
-			int yearNow = now.get(Calendar.YEAR);
-			List<FiscalYear> lstFiscalYrs = leavesDao.getAllFiscalYears();
-			for(FiscalYear fy : lstFiscalYrs) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(fy.getDtTo());
-				if(yearNow==cal.get(Calendar.YEAR)) {
-					empFisc.setFiscalYear(fy);
-				}
-			}
-			emp.getEmpFiscalYrLeaves().clear();
-			emp.getEmpFiscalYrLeaves().add(empFisc);
-			employeeDao.updateEmployee(emp);
+			employeeDao.updateEmployee(form, emp);
 			
 		} else {
 			/**
 			 * New
 			 * */
-			emp = new Employee();
-			CompanyAccount company = employeeDao.getCompany(form.getCompanyAccountId());
-			emp.setCompany(company);
-			emp.setIdEmployee(form.getEmployeeId());
-			emp.setFirstName(form.getFirstName());
-			emp.setLastName(form.getLastName());
-			emp.setEmailId(form.getEmailId());
-			emp.setReportsTo(employeeDao.getEmployee(form.getReportsTo()));
-			Department dept = employeeDao.getDepartment(form.getDepartment());
-			emp.setDepartment(dept);
-			emp.setAdmin(form.getAdmin().equals(0) ? false : true);
-			emp.setDeleted(form.getDeleted().equals(0) ? false : true);
 			
-			Set<Approvers> setApprovers = null;
-			if(form.getApprovers()!=null && form.getApprovers().size()>0) {
-				setApprovers = new HashSet<Approvers>();
-				for(Integer approverId : form.getApprovers()) {
-					Approvers approvers = new Approvers();
-					Employee approver = employeeDao.getEmployee(approverId);
-					approvers.setEmployee(emp);
-					approvers.setApprover(approver);
-					setApprovers.add(approvers);
-				}
-			}
-			emp.setApprovers(setApprovers);
-			
-			Calendar now = Calendar.getInstance();
-			EmployeeFiscalYearLeaves empFisc = new EmployeeFiscalYearLeaves();
-			empFisc.setEmployee(emp);
-			empFisc.setLeavesAllocated(form.getLeavesAllocated());
-			empFisc.setLeavesCarriedForward(form.getLeavesCarriedForward());
-			int yearNow = now.get(Calendar.YEAR);
-			List<FiscalYear> lstFiscalYrs = leavesDao.getAllFiscalYears();
-			for(FiscalYear fy : lstFiscalYrs) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(fy.getDtTo());
-				if(yearNow==cal.get(Calendar.YEAR)) {
-					empFisc.setFiscalYear(fy);
-				}
-			}
-			Set<EmployeeFiscalYearLeaves> setEmpFisc = new HashSet<EmployeeFiscalYearLeaves>();
-			setEmpFisc.add(empFisc);
-			emp.setEmpFiscalYrLeaves(setEmpFisc);
-			
-			employeeDao.saveEmployee(emp);
+			employeeDao.saveEmployee(form, emp);
 		}
 	}
 

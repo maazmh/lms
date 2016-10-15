@@ -1,0 +1,76 @@
+@CHARSET "UTF-8";
+body {
+  color: #73879C;
+  background: #F7F7F7; /* Maaz changed the color from #2A3F54 to #F7F7F7*/
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.471; }
+  
+.nav > li > a {
+  position: relative;
+  display: block;
+  padding: 13px 15px 12px; }
+
+.nav.side-menu > li.current-page, .nav.side-menu > li.active {
+  border-right: 5px solid #1ABB9C; }
+
+.nav li.current-page {
+  background: rgba(255, 255, 255, 0.05); }
+
+.nav li li li.current-page {
+  background: none; }
+
+.nav li li.current-page a {
+  color: #fff; }
+  
+.nav.navbar-nav > li > a {
+  color: #515356 !important; }
+
+.nav.top_menu > li > a {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  color: #34495E !important; }
+
+.nav > li > a:hover, .nav > li > a:focus {
+  background-color: transparent; }
+  
+.navbar {
+  margin-bottom: 0; }
+
+.navbar-header {
+  /*background: #34495E; */
+  }
+
+.navbar-right {
+  margin-right: 0; }
+
+.top_nav .navbar-right {
+  margin: 0;
+  width: 70%;
+  float: right; }
+
+.top_nav .navbar-right li {
+  display: inline-block;
+  float: right;
+  position: static; }
+
+@media (min-width: 480px) {
+  .top_nav .navbar-right li {
+    position: relative; } }
+.top_nav .dropdown-menu li {
+  width: 100%; }
+
+.top_nav .dropdown-menu li a {
+  width: 100%;
+  padding: 12px 20px; }
+
+.top_nav li a i {
+  font-size: 15px; }
+  
+.navbar-brand, .navbar-nav > li > a {
+  font-weight: 500;
+  color: #ECF0F1 !important;
+  margin-left: 0 !important;
+  line-height: 32px; }

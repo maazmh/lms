@@ -443,7 +443,9 @@ a:hover, a:focus {
   margin-bottom: 0; }
 
 .navbar-header {
-  background: #34495E; }
+ /*background: #34495E;*/ 
+ /*Maaz commented this above line. To remove the green background from the top menu..*/
+  }
 
 .navbar-right {
   margin-right: 0; }

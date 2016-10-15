@@ -10,6 +10,7 @@
 <link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 <link rel="stylesheet"	href="/lms/resources/css/gentelella-custom.css">
 <link rel="stylesheet"	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css">
+<link rel="stylesheet"	href="/lms/resources/css/lms.css">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
@@ -221,6 +222,7 @@ function validateAndSave() {
 	<%@ include file="navbar.html" %>
 	<div style="padding-top: 4em;"></div>
 	<input type="hidden" id='leavesChartData' value="${leavesChartData}">
+	<input type="hidden" id='empNameFromSession' value="<%= session.getAttribute("employeeName") %>">
     <div class="container body">
       <div class="main_container">
 

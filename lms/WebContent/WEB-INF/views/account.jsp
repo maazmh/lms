@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.1/css/buttons.bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.0/css/select.bootstrap.min.css">
 <link rel="stylesheet"	href="/lms/resources/css/bootstrap-select.min.css">
+<link rel="stylesheet"	href="/lms/resources/css/lms.css">
 
 	
 <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.3.js">

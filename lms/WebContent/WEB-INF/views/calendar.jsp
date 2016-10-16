@@ -99,20 +99,35 @@ function validate() {
 		$('#spanDtFrom').html($('#dtFrom').val());
 		$('#spanDtTo').html($('#dtTo').val());
 		$('#spanLeaveType').html($('#leaveType option:selected').text());
-		$('#spanAppliedDays').html($('#dtTo').val());
-		$('#spanRemainingLeaves').html($('#leaveType').val());
 		
-		var dtToArray = $('#dtTo').val().split('/');
-		var dtToMonth = dtToArray[0];
-		var dtToDate = dtToArray[1];
+		var dtToArray = $('#dtTo').val().split('-');
+		var dtToDate = dtToArray[0];
+		var dtToMonth = dtToArray[1];
 		var dtToYear = dtToArray[2];
-		$('#dtTo').val(dtToDate + '-' + dtToMonth + '-' + dtToYear);
+		//$('#dtTo').val(dtToDate + '-' + dtToMonth + '-' + dtToYear);
 		
-		var dtFromArray = $('#dtFrom').val().split('/');
-		var dtFromMonth = dtFromArray[0];
-		var dtFromDate = dtFromArray[1];
+		var dtFromArray = $('#dtFrom').val().split('-');
+		var dtFromDate = dtFromArray[0];
+		var dtFromMonth = dtFromArray[1];
 		var dtFromYear = dtFromArray[2];
-		$('#dtFrom').val(dtFromDate + '-' + dtFromMonth + '-' + dtFromYear);
+		
+		var dtFrom = new Date(dtFromYear+'-'+dtFromMonth+'-'+dtFromDate);
+		var dtTo = new Date(dtToYear+'-'+dtToMonth+'-'+dtToDate);
+		
+		if(dtFrom.getDay()==5 || dtFrom.getDay()==6 || dtTo.getDay()==5 || dtTo.getDay()==6) {
+			$('#divAlertMessage').html('Official Leaves cannot start or End on a weekend.');
+			$('#event-modal').modal('hide');
+			$('#myModal').modal('hide');
+			$('#alertModal').modal();
+			return false;
+		}
+		
+		//var dateDiff = dtTo.getDate() - dtFrom.getDate();
+		var dateDiffBusinessDays = calcBusinessDays(dtFrom, dtTo);
+		//alert('dateDiffBusinessDays: '+dateDiffBusinessDays);
+		
+		$('#spanAppliedDays').html(dateDiffBusinessDays);
+		$('#spanRemainingLeaves').html($('#leavesRemaining').val()-dateDiffBusinessDays);
 		
 		$('#event-modal').modal('hide');
 		$('#myModal').modal('show');
@@ -321,6 +336,25 @@ function init() {
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        <button id="btnSaveChanges" type="button" class="btn btn-primary" onclick="saveLeaves();">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<!-- Alert Modal -->
+	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="alertModalLabel">Error!</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<div id="divAlertMessage">
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	      </div>
 	    </div>
 	  </div>

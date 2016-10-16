@@ -1,6 +1,14 @@
 
 
 function editEvent(event) {
+	//alert('event.startDate.getDay(): '+ event.startDate.getDay());
+	
+	if(event.startDate.getDay()==5 || event.startDate.getDay()==6 || event.endDate.getDay()==5 || event.endDate.getDay()==6) {
+		$('#divAlertMessage').html('Official Leaves cannot start or End on a weekend.');
+		$('#alertModal').modal();
+		return;
+	}
+	
     $('#event-modal input[name="event-index"]').val(event ? event.id : '');
     $('#event-modal input[name="event-name"]').val(event ? event.name : '');
     $('#event-modal input[name="event-location"]').val(event ? event.location : '');

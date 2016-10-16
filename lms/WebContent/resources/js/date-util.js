@@ -36,3 +36,18 @@ function dateDiffBusinessDays(strDtFrom, strDtTo) {
 
     return (iDateDiff + 1); // add 1 because dates are inclusive
 }
+
+function calcBusinessDays(dtFrom, dtTo) {
+	//Function by Maaz 
+	//getDay(): Friday is 5 and Saturday is 6. Sunday is 0
+	
+	if (dtTo < dtFrom) return -1; // error code if dates transposed
+	var bussDays=0;
+	do {
+		if(dtFrom.getDay() != 5 && dtFrom.getDay() != 6) { //Not Friday or Saturday
+			bussDays++;
+		}
+		dtFrom.setDate(dtFrom.getDate() + 1);
+	} while(dtFrom.getTime() <= dtTo.getTime());
+	return bussDays;
+}

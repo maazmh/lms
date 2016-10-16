@@ -4,8 +4,14 @@ function editEvent(event) {
     $('#event-modal input[name="event-index"]').val(event ? event.id : '');
     $('#event-modal input[name="event-name"]').val(event ? event.name : '');
     $('#event-modal input[name="event-location"]').val(event ? event.location : '');
-    $('#event-modal input[name="dtFrom"]').datepicker('update', event ? event.startDate : '');
-    $('#event-modal input[name="dtTo"]').datepicker('update', event ? event.endDate : '');
+    $('#event-modal input[name="dtFrom"]').datepicker({
+        format: 'dd-mm-yyyy',
+        autoclose: true
+    }).datepicker("update", event ? event.startDate: '');
+    $('#event-modal input[name="dtTo"]').datepicker({
+        format: 'dd-mm-yyyy',
+        autoclose: true
+    }).datepicker("update", event ? event.endDate: '');
     $('#event-modal').modal();
 }
 
